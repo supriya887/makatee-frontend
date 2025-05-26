@@ -111,122 +111,108 @@ function TrophyHomePage() {
             >
               <div className="swiper-wrapper">
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/trophies.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Trophies</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/trophies.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Trophies</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      {" "}
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/medals.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Medals</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    {" "}
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/medals.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Medals</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/crystal-awards.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Crystal Awards</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/crystal-awards.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Crystal Awards</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/Shields-&-Plaques.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Sheilds &amp; Plaques</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/Shields-&-Plaques.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Sheilds &amp; Plaques</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/cup-trophies.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Cup Trophies</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/cup-trophies.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Cup Trophies</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/other-awards.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Other Awards</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/other-awards.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Other Awards</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
 
                 <SwiperSlide className="swiper-slide">
-                  <div className="swiper-slide">
-                    <div className="category-box">
-                      <a href="">
-                        <div className="category-img">
-                          <img
-                            src="/assets/images/category/trophies/custom-awards.png"
-                            className="img-fluid"
-                            alt=""
-                          />
-                        </div>
-                        <h4>Custom Awards</h4>
-                      </a>
-                    </div>
+                  <div className="category-box">
+                    <a href="">
+                      <div className="category-img">
+                        <img
+                          src="/assets/images/category/trophies/custom-awards.png"
+                          className="img-fluid"
+                          alt=""
+                        />
+                      </div>
+                      <h4>Custom Awards</h4>
+                    </a>
                   </div>
                 </SwiperSlide>
               </div>

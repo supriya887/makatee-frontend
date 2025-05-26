@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import AddAddressPage from "@/views/address/AddAddressPage";
+import AddressPage from "@/views/address/AddressPage";
 
 export default function () {
   return (
     <Suspense>
-      <AddAddressPage />
+      <AddressPage />
     </Suspense>
   );
 }

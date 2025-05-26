@@ -265,7 +265,7 @@ p {
     z-index: 1000;
     transition: ease all 0.5s;
 }
-#backtotop ion-icon {
+#backtotop .icon {
     font-size: var(--font-size-24);
     color: var(--color-ffffff);
     top: 0.3rem;
@@ -960,13 +960,13 @@ header {
     bottom: 149px;
     z-index: 99;
 }
-.download-app ion-icon {
-    font-size: var(--font-size-20);
+.download-app .icon {
+    font-size: var(--font-size-20) !important;
     background-color: var(--color-be1414);
     border-radius: 100%;
     padding: 1rem;
 }
-.download-app ion-icon:hover {
+.download-app :hover .icon {
     background-color: var(--color-3c57c6);
 }
 .cart-icon {
@@ -1817,17 +1817,23 @@ footer h6 {
 }
 .whatsapp-btn {
     position: fixed;
-    bottom: 82px;
+    bottom: 100px;
     right: 1.2rem;
     z-index: 99;
 }
-.whatsapp-btn ion-icon {
+.whatsapp-btn .icon {
     /* width: 3.2rem; */
     background-color: #237d26;
     color: var(--color-ffffff);
     padding: 0.9rem;
     border-radius: 50%;
     font-size: 24px;
+}
+.whatsapp-button {
+    background: green;
+    padding: 15px;
+    border-radius: 100px;
+    padding-bottom: 17px
 }
 .showcase-card {
     position: relative;
@@ -3809,9 +3815,9 @@ ion-icon .wishlist-page .showcase-outer .close a {
     background-color: transparent;
     border-radius: 7px;
 }
-.dashborad_side_panel ion-icon {
-    color: var(--color-ffffff);
-    font-size: var(--font-size-18);
+.dashborad_side_panel .icon {
+    color: var(--color-ffffff) !important;
+    font-size: var(--font-size-18) !important;
 }
 .dashboard-page {
     background-color: var(--color-edf6ff);
@@ -4003,7 +4009,7 @@ ion-icon .wishlist-page .showcase-outer .close a {
     color: #000;
 }
 .dashborad_side_panel ul li a.active {
-    background-color: var(--color-3c57c6);
+    background-color: var(--color-3c57c6) !important;
     color: var(--color-ffffff) !important;
 }
 .dashborad_side_panel ul li a {
@@ -4016,11 +4022,11 @@ ion-icon .wishlist-page .showcase-outer .close a {
     color: var(--color-47515e);
     border-bottom: 1px solid var(--color-f6f6f6);
 }
-.dashborad_side_panel ul li a ion-icon {
-    color: var(--color-47515e);
-}
-.dashborad_side_panel ul li a:hover ion-icon {
+.dashborad_side_panel ul li a .icon {
     color: var(--color-ffffff) !important;
+}
+.dashborad_side_panel ul li a:hover .icon {
+    color: var(--color-000000) !important;
 }
 .dashborad_side_panel ul li a:hover h6 {
     color: var(--color-ffffff) !important;
@@ -4030,9 +4036,9 @@ ion-icon .wishlist-page .showcase-outer .close a {
     color: var(--color-ffffff) !important;
 }
 .dashborad_side_panel ul li a h6 {
-    color: var(--color-47515e);
-    font-size: 15px;
-    font-weight: 500;
+    color: var(--color-47515e) !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
     line-height: 1.5;
     margin-bottom: 0;
 }

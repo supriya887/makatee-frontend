@@ -10,6 +10,11 @@ import Script from "next/script";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import AOSInit from "@/components/AOSInit";
+import {
+  IoArrowUpOutline,
+  IoLogoWhatsapp,
+  IoPhonePortraitOutline,
+} from "react-icons/io5";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +40,7 @@ export default function RootLayout({ children }) {
         duration: 1000,
         once: true,
       });
-  
+
       setTimeout(() => {
         window.AOS.refresh(); // Ensure it catches dynamically added elements
       }, 100); // wait for content like Swiper to fully render
@@ -55,7 +60,11 @@ export default function RootLayout({ children }) {
         <meta name="language" content="EN" />
         <title>Makatee</title>
         <meta name="description" content="" />
-        <link rel="icon" href="/assets/images/favicon-32x32.png" type="image/x-icon" />
+        <link
+          rel="icon"
+          href="/assets/images/favicon-32x32.png"
+          type="image/x-icon"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
           rel="stylesheet"
@@ -93,22 +102,22 @@ export default function RootLayout({ children }) {
       <body>
         <AOSInit />
         <a id="backtotop">
-          <ion-icon name="arrow-up-outline"></ion-icon>
+          <IoArrowUpOutline  color="white" size={24} />
         </a>
 
         {children}
         <div className="download-app">
-          <a href="">
-            <ion-icon name="phone-portrait-outline"></ion-icon>{" "}
+          <a className="icon" href="">
+            <IoPhonePortraitOutline color="white" />
           </a>
         </div>
-        <div className="whatsapp-btn">
+        <div className="whatsapp-btn ">
           <a
             href="https://wa.me/+919819207803?"
-            className="whatsapp-button"
+            className="whatsapp-button "
             target="_blank"
           >
-            <ion-icon name="logo-whatsapp"></ion-icon>
+            <IoLogoWhatsapp size={24} color="white" />
           </a>
         </div>
         <Script src="https://code.jquery.com/jquery-3.4.1.min.js"></Script>

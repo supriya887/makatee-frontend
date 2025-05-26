@@ -100,7 +100,7 @@ function Header() {
                               <hr />
                               <li className="clearfix">
                                 <a
-                                  href="/register"
+                                  href="/dashboard"
                                   className="common-btn common-btn-purple"
                                   style={{ marginLeft: 0 }}
                                 >
