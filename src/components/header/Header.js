@@ -221,7 +221,7 @@ function Header() {
                                 </div>
                               </li>
                               <a
-                                href="checkout-guest.php"
+                                href="/checkout-guest"
                                 className="common-btn common-btn-purple"
                               >
                                 Checkout

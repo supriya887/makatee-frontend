@@ -51,7 +51,7 @@ export default function SidePanelSection() {
               </a>
             </li>
             <li className="">
-              <a href="payment-method.php">
+              <a href={`/payment-method`}>
                 <IoWalletOutline className="icon" />
                 <h6>Payment Method</h6>
               </a>
@@ -111,7 +111,7 @@ export default function SidePanelSection() {
               </a>
             </li>
             <li className="">
-              <a href="payment-method.php">
+              <a href={`/payment-method`}>
                 <IoWalletOutline className="icon" />
                 <h6>Payment Method</h6>
               </a>

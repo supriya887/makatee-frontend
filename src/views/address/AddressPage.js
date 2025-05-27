@@ -32,15 +32,19 @@ export default function AddressPage() {
                   <div className="" data-aos="fade-up" data-aos-duration={1500}>
                     <div className="row">
                       <div className="col-lg-3 col-md-12 col-sm-12 col-12">
-                          <SidePanelSection />
+                        <SidePanelSection />
                       </div>
                       <div className="col-lg-9 col-md-12 col-sm-12 col-12">
                         {addressForm ? (
-                          <AddAddressPage />
+                          <AddAddressPage
+                            onCancel={() => setAddressForm(false)}
+                          />
                         ) : (
                           <div className="add-address-box mobile-address row m-0">
                             <div className="col-12 p-0">
                               <div className="address-box-head">
+                                <h5> Delivery Address</h5>
+
                                 <button
                                   type="button"
                                   className="common-btn add-address"
@@ -51,10 +55,7 @@ export default function AddressPage() {
                               </div>
                               <hr />
                               <div className="cart-left">
-                                <h6 className="mb-3">
-                                  {" "}
-                                  Delivery addresses (2)
-                                </h6>
+                               
                                 <ul>
                                   <li>
                                     <div className="form-check">

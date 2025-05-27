@@ -16,7 +16,7 @@ function CheckoutPage() {
                 <a href="/address" className="tab common-btn">
                   Address
                 </a>
-                <a href="payment-method.php" className="tab common-btn">
+                <a href={`/payment-method`} className="tab common-btn">
                   Payment
                 </a>
               </div>
@@ -247,7 +247,7 @@ function CheckoutPage() {
                     </div>
                   </div>
                   <a
-                    href="payment-method.php"
+                    href={`/payment-method`}
                     className="common-btn common-btn-purple mt-5"
                   >
                     Checkout

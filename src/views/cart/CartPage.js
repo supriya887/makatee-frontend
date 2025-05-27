@@ -19,7 +19,7 @@ function CartPage() {
                 <a href="/address" className="tab common-btn">
                   Address
                 </a>
-                <a href="payment-method.php" className="tab common-btn">
+                <a href={`/payment-method`} className="tab common-btn">
                   Payment
                 </a>
               </div>

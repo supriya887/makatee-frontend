@@ -101,8 +101,8 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <AOSInit />
-        <a id="backtotop">
-          <IoArrowUpOutline  color="white" size={24} />
+        <a className="align-content-center" id="backtotop">
+          <IoArrowUpOutline color="white" size={24} />
         </a>
 
         {children}
