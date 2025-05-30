@@ -1,5 +1,7 @@
 "use client";
 
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 import React from "react";
 import {
   IoAlbumsOutline,
@@ -13,6 +15,17 @@ import {
 } from "react-icons/io5";
 
 export default function SidePanelSection() {
+  const router = useRouter();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+
+    Cookies.remove("makatee-access-token");
+    localStorage.removeItem("makatee-access-token");
+
+    router.replace("/");
+  };
+
   return (
     <div>
       {" "}
@@ -63,7 +76,7 @@ export default function SidePanelSection() {
               </a>
             </li>
             <li>
-              <a href="">
+              <a onClick={handleLogout}>
                 <IoLogOutOutline className="icon" />
                 <h6>Logout</h6>
               </a>
@@ -123,7 +136,7 @@ export default function SidePanelSection() {
               </a>
             </li>
             <li>
-              <a href="">
+              <a onClick={handleLogout}>
                 <IoLogOutOutline className="icon" />
                 <h6>Logout</h6>
               </a>

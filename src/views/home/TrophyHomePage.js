@@ -31,7 +31,7 @@ import {
 import "swiper/css/pagination";
 
 import "swiper/css/navigation";
-import ProductCard1 from "@/components/product/ProductCard1";
+import ProductCard2 from "@/components/product/ProductCard2";
 import { TROPHY_HOME_ROUTE } from "@/utils/constants";
 
 function TrophyHomePage() {
@@ -277,25 +277,25 @@ function TrophyHomePage() {
               >
                 <div className="swiper-wrapper">
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                 </div>
               </Swiper>
@@ -352,25 +352,25 @@ function TrophyHomePage() {
               >
                 <div className="swiper-wrapper">
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                   <SwiperSlide className="swiper-slide">
-                    <ProductCard1 categoryType={TROPHY_HOME_ROUTE} />
+                    <ProductCard2 categoryType={TROPHY_HOME_ROUTE} />
                   </SwiperSlide>
                 </div>
               </Swiper>

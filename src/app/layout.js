@@ -16,15 +16,11 @@ import {
   IoPhonePortraitOutline,
 } from "react-icons/io5";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Toaster } from "react-hot-toast";
+import { store } from "@/store";
+import { fetchCart, fetchCartToken } from "@/store/slices/cart-slice";
+import { fetchWishlist } from "@/store/slices/wishlist-slice";
+import { Provider } from "react-redux";
 
 const metadata = {
   title: "Create Next App",
@@ -32,7 +28,36 @@ const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  // const pathname = usePathname();
+  useEffect(() => {
+    async function init() {
+      await getCartToken();
+      getCart();
+      getWishlist();
+    }
+
+    init();
+  }, []);
+
+  const getCartToken = async () => {
+    store.dispatch(fetchCartToken());
+  };
+
+  const getWishlist = async () => {
+    const token = localStorage.getItem("makatee-access-token");
+    token && store.dispatch(fetchWishlist());
+  };
+
+  // const getCategoryList = async () => {
+  //   let res = await categoryListApi({});
+
+  //   if (res?.status == 1) {
+  //     store.dispatch(setCategories(res?.data?.list || []));
+  //   }
+  // };
+
+  const getCart = async () => {
+    store.dispatch(fetchCart());
+  };
 
   const initAOS = () => {
     if (window.AOS) {
@@ -46,10 +71,6 @@ export default function RootLayout({ children }) {
       }, 100); // wait for content like Swiper to fully render
     }
   };
-
-  // useEffect(() => {
-  //   initAOS();
-  // }, [pathname]);
 
   return (
     <html lang="en">
@@ -104,40 +125,42 @@ export default function RootLayout({ children }) {
         <a className="align-content-center" id="backtotop">
           <IoArrowUpOutline color="white" size={24} />
         </a>
-
-        {children}
-        <div className="download-app">
-          <a className="icon" href="">
-            <IoPhonePortraitOutline color="white" />
-          </a>
-        </div>
-        <div className="whatsapp-btn ">
-          <a
-            href="https://wa.me/+919819207803?"
-            className="whatsapp-button "
-            target="_blank"
-          >
-            <IoLogoWhatsapp size={24} color="white" />
-          </a>
-        </div>
-        <Script src="https://code.jquery.com/jquery-3.4.1.min.js"></Script>
-        <Script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></Script>
-        <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></Script>
-        <Script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/fileinput.min.js"></Script>
-        <Script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/plugins/sortable.min.js"></Script>
-        <Script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/themes/fas/theme.min.js"></Script>
-        <Script src="/assets/upload-file/script.js"></Script>
-        <Script
-          onLoad={initAOS}
-          src="https://unpkg.com/aos@2.3.1/dist/aos.js"
-        ></Script>
-        <Script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></Script>
-        <Script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.2.0/jquery.magnific-popup.min.js"></Script>
-        <Script
-          type="module"
-          src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
-        ></Script>
-        <Script src="/assets/js/custom.js"></Script>
+        <Provider store={store}>
+          {children}
+          <div className="download-app">
+            <a className="icon" href="">
+              <IoPhonePortraitOutline color="white" />
+            </a>
+          </div>
+          <div className="whatsapp-btn ">
+            <a
+              href="https://wa.me/+919819207803?"
+              className="whatsapp-button "
+              target="_blank"
+            >
+              <IoLogoWhatsapp size={24} color="white" />
+            </a>
+          </div>
+          <Script src="https://code.jquery.com/jquery-3.4.1.min.js"></Script>
+          <Script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></Script>
+          <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></Script>
+          <Script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/fileinput.min.js"></Script>
+          <Script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/js/plugins/sortable.min.js"></Script>
+          <Script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.8/themes/fas/theme.min.js"></Script>
+          <Script src="/assets/upload-file/script.js"></Script>
+          <Script
+            onLoad={initAOS}
+            src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+          ></Script>
+          <Script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></Script>
+          <Script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.2.0/jquery.magnific-popup.min.js"></Script>
+          <Script
+            type="module"
+            src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+          ></Script>
+          <Script src="/assets/js/custom.js"></Script>
+        </Provider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );

@@ -14,7 +14,7 @@ import "swiper/css/pagination";
 
 import "swiper/css/navigation";
 import { UNIFORM_HOME_ROUTE } from "@/utils/constants";
-import ProductCard1 from "@/components/product/ProductCard1";
+import ProductCard2 from "@/components/product/ProductCard2";
 
 function UniformHomePage() {
   return (
@@ -259,25 +259,25 @@ function UniformHomePage() {
                 >
                   <div className="swiper-wrapper">
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                   </div>
                 </Swiper>
@@ -334,25 +334,25 @@ function UniformHomePage() {
                 >
                   <div className="swiper-wrapper">
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                     <SwiperSlide className="swiper-slide">
-                      <ProductCard1 categoryType={UNIFORM_HOME_ROUTE} />
+                      <ProductCard2 categoryType={UNIFORM_HOME_ROUTE} />
                     </SwiperSlide>
                   </div>
                 </Swiper>

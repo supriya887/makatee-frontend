@@ -1,9 +1,66 @@
-"use client"
+"use client";
 
+import { loginApi } from "@/api";
 import Layout1 from "@/components/layout/Layout1";
-import React from "react";
+import Cookies from "js-cookie";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 
 function LoginPage() {
+  const router = useRouter();
+  const passwordInput = useRef();
+  const searchParams = useSearchParams();
+
+  const [loading, setLoading] = useState(false);
+  const [valErrors, setValErrors] = useState({});
+
+  const [formValues, setFormValues] = useState({
+    email: "",
+    password: "",
+  });
+
+  const hidePassword = () => {
+    console.log(passwordInput);
+    if (passwordInput.current.type === "password") {
+      passwordInput.current.type = "text";
+    } else {
+      passwordInput.current.type = "password";
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setValErrors({});
+
+    const res = await loginApi({
+      email: formValues.email,
+      password: formValues.password,
+      cart_token: localStorage.getItem("cart_token"),
+    });
+
+    if (res?.status == 1) {
+      Cookies.set("makatee-access-token", res?.data?.accessToken);
+      localStorage.setItem("makatee-access-token", res?.data?.accessToken);
+
+      const redirectURL = searchParams.get("redirectTo") ?? "/";
+
+      router.replace(redirectURL);
+    } else {
+      res?.error && toast.error(res?.error);
+      setValErrors(res?.error_array);
+    }
+
+    setLoading(false);
+  };
+
   return (
     <Layout1>
       <section className="login-section section-space">
@@ -18,40 +75,51 @@ function LoginPage() {
                     Do you already have an account with us? Please log in to
                     access.
                   </p>
-                  <form>
+                  <form onSubmit={handleLogin}>
                     <div className="mb-3">
-                      <label
-                        htmlFor="exampleInputEmail1"
-                        className="form-label"
-                      >
+                      <label htmlFor="email" className="form-label">
                         Email or Phone*
                       </label>
                       <input
                         type="email"
+                        id="email"
+                        name="email"
+                        value={formValues.email || ""}
                         className="form-control"
-                        id="exampleInputEmail1"
-                        aria-describedby="emailHelp"
+                        onChange={handleInputChange}
                       />
-                      <div id="emailHelp" className="form-text" />
+                      {valErrors?.email && (
+                        <small className="text-danger">
+                          {valErrors?.email}
+                        </small>
+                      )}
                     </div>
                     <div className="mb-3">
-                      <label
-                        htmlFor="exampleInputPassword1"
-                        className="form-label"
-                      >
-                        Password or OTP*
+                      <label htmlFor="password" className="form-label">
+                        Password
                       </label>
                       <input
-                        id=""
                         type="password"
+                        ref={passwordInput}
+                        id="password"
+                        name="password"
                         className="form-control password-field"
-                        placeholder="********"
-                        defaultValue=""
+                        value={formValues.password || ""}
+                        onChange={handleInputChange}
                       />
-                      <span
-                        toggle="password-field"
-                        className="bi bi-eye field-icon toggle-password"
-                      />
+                      <a onClick={hidePassword} className="field-icon">
+                        {passwordInput?.current?.type === "password" ? (
+                          <IoEye />
+                        ) : (
+                          <IoEyeOff />
+                        )}
+                      </a>
+
+                      {valErrors?.password && (
+                        <small className="text-danger">
+                          {valErrors?.password}
+                        </small>
+                      )}
                     </div>
                     <div className="mb-3 form-check">
                       <input
@@ -66,14 +134,15 @@ function LoginPage() {
                         Remember Me
                       </label>
                     </div>
-                    <button type="submit" className="common-btn">
-                      Log In{" "}
+                    <button
+                      disabled={loading}
+                      type="submit"
+                      className="common-btn"
+                    >
+                      {loading ? "Please wait..." : "Login"}
                     </button>
                     <div className="links mt-4">
-                      <a
-                        href="/forgot-password"
-                        style={{ color: "#d15b6c" }}
-                      >
+                      <a href="/forgot-password" style={{ color: "#d15b6c" }}>
                         Forgot password?
                       </a>
                       <a href="/register">Do not have an account?</a>
