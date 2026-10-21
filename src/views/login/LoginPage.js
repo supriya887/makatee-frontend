@@ -2,16 +2,22 @@
 
 import { loginApi } from "@/api";
 import Layout1 from "@/components/layout/Layout1";
+import { setAccessToken, setUserData } from "@/store/slices/user-slice";
+import { useGoogleLogin } from "@react-oauth/google";
 import Cookies from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { useDispatch } from "react-redux";
+import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 function LoginPage() {
   const router = useRouter();
   const passwordInput = useRef();
   const searchParams = useSearchParams();
+
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [valErrors, setValErrors] = useState({});
@@ -35,6 +41,16 @@ function LoginPage() {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
+  const onGoogleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => console.log("codeResponse", codeResponse),
+    onError: (error) => console.log("Login Failed:", error),
+  });
+
+  const responseFacebook = (response) => {
+    console.log("Facebook response:", response);
+    // handle login success here
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -43,16 +59,19 @@ function LoginPage() {
     const res = await loginApi({
       email: formValues.email,
       password: formValues.password,
-      cart_token: localStorage.getItem("cart_token"),
+      cart_token: localStorage.getItem("makatee_cart_token"),
     });
 
     if (res?.status == 1) {
       Cookies.set("makatee-access-token", res?.data?.accessToken);
       localStorage.setItem("makatee-access-token", res?.data?.accessToken);
 
-      const redirectURL = searchParams.get("redirectTo") ?? "/";
+      dispatch(setAccessToken(res?.data?.accessToken));
+      dispatch(setUserData(res?.data?.user));
 
-      router.replace(redirectURL);
+      const redirectURL = searchParams.get("returnUrl") ?? "/";
+
+      window.location.replace(redirectURL);
     } else {
       res?.error && toast.error(res?.error);
       setValErrors(res?.error_array);
@@ -78,7 +97,7 @@ function LoginPage() {
                   <form onSubmit={handleLogin}>
                     <div className="mb-3">
                       <label htmlFor="email" className="form-label">
-                        Email or Phone*
+                        Email *
                       </label>
                       <input
                         type="email"
@@ -143,14 +162,14 @@ function LoginPage() {
                     </button>
                     <div className="links mt-4">
                       <a href="/forgot-password" style={{ color: "#d15b6c" }}>
-                        Forgot password?
+                        Forgot password?{"  "}
                       </a>
                       <a href="/register">Do not have an account?</a>
                     </div>
                   </form>
-                  <div className="or">Or login with </div>
+                  {/* <div className="or">Or login with </div>
                   <div className="btn-group">
-                    <button className="btn google">
+                    <button onClick={onGoogleLogin} className="btn google">
                       <img
                         src="/assets/images/google.png"
                         className="img-fluid"
@@ -158,15 +177,26 @@ function LoginPage() {
                       />
                       <span>Sign in with Google</span>
                     </button>
-                    <button className="btn facebook">
-                      <img
-                        src="/assets/images/facebook.png"
-                        className="img-fluid"
-                        alt=""
-                      />
-                      <span>Sign in with Facebook</span>
-                    </button>
-                  </div>
+                    <FacebookLogin
+                      appId="1241937257374318"
+                      autoLoad={false}
+                      fields="name,email,picture"
+                      callback={responseFacebook}
+                      render={(renderProps) => (
+                        <button
+                          className="btn facebook"
+                          onClick={renderProps.onClick}
+                        >
+                          <img
+                            src="/assets/images/facebook.png"
+                            className="img-fluid"
+                            alt=""
+                          />
+                          <span>Sign in with Facebook</span>
+                        </button>
+                      )}
+                    />
+                  </div> */}
                 </div>
               </div>
             </div>

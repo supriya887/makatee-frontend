@@ -1,1 +1,1 @@
-export const API_URL = 'https://staging.goyalinfotech.com/makatee/api'
+export const API_URL = 'https://panel.makatee.com/api'

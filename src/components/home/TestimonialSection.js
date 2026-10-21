@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
-function TestimonialSection() {
+import "swiper/css/pagination";
+
+import "swiper/css/navigation";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectFade, Navigation } from "swiper/modules";
+import { IoArrowBack, IoArrowForward } from "react-icons/io5";
+
+function TestimonialSection({ testimonials }) {
+  const [list, setList] = useState([1, 2, 3, 4, 5]);
   return (
-    <section className="container-fluid testimonial-section section-space">
+    <section className="container-fluid testimonial-section section-space d-none">
       <div className="row m-0">
-        <div className="col-12">
+        <div className="col-12 col-lg-10 mx-auto">
           <section className="testimonial-area">
             <div className="container">
               <h4
@@ -15,7 +23,81 @@ function TestimonialSection() {
               >
                 What our Client Say
               </h4>
-              <div className="testi-wrap">
+              <div className={"testi-wrap"}>
+                <div className="swiper-button testi-swiper-button-next">
+                  <IoArrowForward />
+                </div>
+                <div className="swiper-button testi-swiper-button-prev">
+                  <IoArrowBack />
+                </div>
+                <Swiper
+                  modules={[EffectFade, Navigation]}
+                  //   effect={"fade"}
+
+                  speed={1000}
+                  //  className="swiper-wrapper"
+                  fadeEffect={{ crossFade: true }}
+                  slidesPerView={1}
+                  className={"testimonial-slider"}
+                  navigation={{
+                    nextEl: ".testi-swiper-button-next",
+                    prevEl: ".testi-swiper-button-prev",
+                    disabledClass: "swiper-button-disabled",
+                  }}
+                  
+                  breakpoints={{
+                    1199: {
+                      slidesPerView: 2,
+                    },
+                    1024: {
+                      slidesPerView: 2,
+                    },
+                    991: {
+                      slidesPerView: 2,
+                    },
+                    767: {
+                      slidesPerView: 2,
+                    },
+                  }}
+                  loop={true}
+                >
+                  <div className="swiper-wrapper">
+                    {testimonials?.map((el, i) => {
+                      return (
+                        <SwiperSlide
+                          key={`slider-${i}`}
+                          className="swiper-slide"
+                        >
+                          <div className="client-single position-1">
+                         
+                            <div className="client-comment mt-10">
+                              <div
+                                style={{ lineHeight: "22px" }}
+                                dangerouslySetInnerHTML={{
+                                  __html: el?.description,
+                                }}
+                              />
+                            </div>
+                           <div>
+                               <div className="client-img">
+                              <img
+                                src={el?.image_path}
+                                className="img-fluid"
+                                alt=""
+                              />
+                            </div>
+                             <div className="client-info">
+                              <h3>{el?.name}</h3>
+                            </div></div>
+                          </div>
+                        </SwiperSlide>
+                      );
+                    })}
+                  </div>
+                  <div className="swiper-pagination position-absolute"></div>
+                </Swiper>
+              </div>
+              {/* <div className="testi-wrap">
                 <div
                   className="client-single active position-1"
                   data-position="position-1"
@@ -40,200 +122,9 @@ function TestimonialSection() {
                     <h5>Client Name</h5>
                   </div>
                 </div>
-                <div
-                  className="client-single inactive position-2"
-                  data-position="position-2"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/2.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-3"
-                  data-position="position-3"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/3.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-4"
-                  data-position="position-4"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/4.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-5"
-                  data-position="position-5"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/5.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-6"
-                  data-position="position-6"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/6.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-7"
-                  data-position="position-7"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/7.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-8"
-                  data-position="position-8"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/8.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-                <div
-                  className="client-single inactive position-9"
-                  data-position="position-9"
-                >
-                  <div className="client-img">
-                    <img
-                      src="/assets/images/clients/9.png"
-                      className="img-fluid"
-                      alt=""
-                    />
-                  </div>
-                  <div className="client-comment">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Id necessitatibus cumque veritatis commodi beatae suscipit
-                      similique fuga iure esse asperiores iste incidunt, aperiam
-                      consequuntur obcaecati tempora doloribus numquam, unde
-                      quis.
-                    </p>
-                  </div>
-                  <div className="client-info">
-                    <h5>Client Name</h5>
-                  </div>
-                </div>
-              </div>
-              <div className="testimonial-slider swiper">
+              
+              </div> */}
+              {/* <div className="testimonial-slider swiper">
                 <div className="swiper-wrapper">
                   <div className="swiper-slide">
                     <div className="client-single">
@@ -329,7 +220,7 @@ function TestimonialSection() {
                   </div>
                 </div>
                 <div className="swiper-pagination" />
-              </div>
+              </div> */}
             </div>
           </section>
         </div>

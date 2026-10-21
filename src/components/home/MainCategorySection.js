@@ -5,7 +5,7 @@ import React from "react";
 
 function MainCategorySection() {
   return (
-    <section className="main-category section-space pt-0">
+    <section className="main-category section-space">
       <div className="container">
         <div className="row ">
           <div className="col-12 col-xxl-10 mx-auto">
@@ -20,9 +20,7 @@ function MainCategorySection() {
                   <div className="main-category-box trophy-category-box">
                     <h3> Trophies, Awards, Medals &amp; Souvenirs</h3>
                     <div className="common-btn">Explore now</div>
-                    {/* <div class="main-trophy-img">
-              <img src="images/trophies-cups-medals-isolated-white.png" alt="" class="img-fluid">
-            </div> */}
+                  
                   </div>
                 </a>
               </div>
@@ -36,10 +34,7 @@ function MainCategorySection() {
                   <div className="main-category-box uniforms-category-box">
                     <h3>Outfits and Uniform Accessories</h3>
                     <div className="common-btn">Explore now</div>
-                    {/* <div class="main-uniform-img">
-
-              <img src="images/uniforms.png" alt="" class="img-fluid">
-            </div> */}
+                  
                   </div>
                 </a>
               </div>

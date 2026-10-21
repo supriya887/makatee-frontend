@@ -2,27 +2,37 @@
 
 import { registerApi } from "@/api";
 import Layout1 from "@/components/layout/Layout1";
+import { setAccessToken, setUserData } from "@/store/slices/user-slice";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { Modal } from "react-bootstrap";
 import toast from "react-hot-toast";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import OTPInput from "react-otp-input";
+import { useDispatch } from "react-redux";
 
 function RegisterPage() {
   const router = useRouter();
   const passwordInput = useRef();
+
+  const searchParams = useSearchParams();
+
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [valErrors, setValErrors] = useState({});
   const [countryList, setCountryList] = useState([]);
   const [otpSent, setOtpSent] = useState(false);
 
+  const [agree, setAgree] = useState(false);
+
   const [formValues, setFormValues] = useState({
     first_name: "",
     last_name: "",
     email: "",
     password: "",
-
+    password_confirmation: "",
     phone: "",
     device_id: "",
     fcm_token: "",
@@ -45,6 +55,7 @@ function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     setLoading(true);
     setValErrors({});
 
@@ -53,18 +64,30 @@ function RegisterPage() {
       last_name: formValues.last_name,
       email: formValues.email,
       password: formValues.password,
+      password_confirmation: formValues?.password_confirmation,
       phone: formValues.phone,
       device_id: "",
       fcm_token: "",
       platform: formValues.platform,
-      // ...(otpSent ? { otp: formValues.otp } : {}),
+      ...(otpSent ? { otp: formValues.otp } : {}),
+      cart_token: localStorage.getItem("makatee_cart_token") || "",
+      terms: agree,
     });
 
     if (res?.status == 1) {
-      Cookies.set("makatee-access-token", res?.data?.accessToken);
-      localStorage.setItem("makatee-access-token", res?.data?.accessToken);
+      if (res?.code == "OTP") {
+        setOtpSent(true);
+      } else if (res?.code == "LOGIN") {
+        Cookies.set("makatee-access-token", res?.data?.accessToken);
+        localStorage.setItem("makatee-access-token", res?.data?.accessToken);
 
-      router.replace("/");
+        dispatch(setAccessToken(res?.data?.accessToken));
+        dispatch(setUserData(res?.data?.user));
+
+        const redirectURL = searchParams.get("returnUrl") ?? "/";
+
+        window.location.replace(redirectURL);
+      }
     } else {
       res?.error && toast.error(res?.error);
       setValErrors(res?.error_array);
@@ -182,6 +205,27 @@ function RegisterPage() {
                         </small>
                       )}
                     </div>
+                    <div className="mb-3">
+                      <label
+                        htmlFor="password_confirmation"
+                        className="form-label"
+                      >
+                        Confirm Password
+                      </label>
+                      <input
+                        className="form-control password-field"
+                        value={formValues?.password_confirmation}
+                        name="password_confirmation"
+                        type="password"
+                        id="password_confirmation"
+                        onChange={handleInputChange}
+                      />
+                      {valErrors?.password_confirmation && (
+                        <small className="text-danger">
+                          {valErrors?.password_confirmation}
+                        </small>
+                      )}
+                    </div>
                     {/* <div className="mb-3">
                       <label
                         htmlFor="exampleInputPassword1"
@@ -200,19 +244,30 @@ function RegisterPage() {
                         className="bi bi-eye field-icon toggle-password"
                       />
                     </div> */}
-                    <div className="mb-3 form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="exampleCheck1"
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="exampleCheck1"
-                      >
-                        I agree to the Terms &amp; Policy
-                      </label>
+                    <div className="mb-3">
+                      <div className="form-check">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          value={agree}
+                          onChange={(e) => setAgree(!agree)}
+                        />
+                        <a
+                          className="form-check-label"
+                          target="_blank"
+                          style={{ cursor: "pointer", color: "#000" }}
+                          href="/terms-conditions"
+                        >
+                          I agree to the Terms &amp; Policy
+                        </a>
+                      </div>
+                      {valErrors?.terms && (
+                        <small className="text-danger">
+                          {valErrors?.terms}
+                        </small>
+                      )}
                     </div>
+
                     <button
                       disabled={loading}
                       type="submit"
@@ -221,7 +276,7 @@ function RegisterPage() {
                       {loading ? "Please wait..." : "Sign Up"}
                     </button>
                   </form>
-                  <div className="or">OR</div>
+                  {/* <div className="or">OR</div>
                   <div className="btn-group">
                     <button className="btn google">
                       <img
@@ -239,12 +294,57 @@ function RegisterPage() {
                       />
                       <span>Sign in with Facebook</span>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        <Modal
+          show={otpSent}
+          size="md"
+          style={{ paddingLeft: "0px" }}
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          onHide={() => {
+            setOtpSent(false);
+            setFormValues((prev) => ({ ...prev, otp: "" }));
+          }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Verify Email and Phone Number</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <section>
+              <p className="mb-4">
+                Enter the 6 digit verification code sent to your email and phone number
+              </p>
+              <form onSubmit={handleRegister}>
+                <div className="justify-content-center d-flex">
+                  <OTPInput
+                    value={formValues.otp || ""}
+                    onChange={(v) =>
+                      setFormValues((prev) => ({ ...prev, otp: v }))
+                    }
+                    containerStyle={{ justifyContent: "space-between" }}
+                    numInputs={6}
+                    inputStyle={{ padding: 0, width: 35, height: 35 }}
+                    renderSeparator={<span>&nbsp;&nbsp;</span>}
+                    renderInput={(props) => <input {...props} />}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="common-btn common-btn-purple mt-4 "
+                  disabled={loading}
+                >
+                  {loading ? "Please wait..." : "Submit"}
+                </button>
+              </form>
+            </section>
+          </Modal.Body>
+        </Modal>
       </section>
     </Layout1>
   );

@@ -39,7 +39,6 @@ function ProductCard2({ categoryType }) {
           style={{ justifyContent: "space-between" }}
         >
           <div className="product-amt">
-            <div className="product-amt" />
             <span className="slash-price">₹ 459</span> ₹ 199
           </div>
           <a href="/cart" className="common-btn">

@@ -6,7 +6,7 @@ import {
   getCartTokenApi,
   removeFromCartApi,
 } from "../../api";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 const cartSlice = createSlice({
   name: "cart",
@@ -36,10 +36,10 @@ const cartSlice = createSlice({
 });
 
 export const fetchCartToken = createAsyncThunk("fetchCartToken", async () => {
-  const currentCartToken = localStorage.getItem("cart_token");
+  const currentCartToken = localStorage.getItem("makatee_cart_token");
   const res = await getCartTokenApi({ cart_token: currentCartToken || "" });
   if (res.status == 1) {
-    localStorage.setItem("cart_token", res.data.cart_token);
+    localStorage.setItem("makatee_cart_token", res.data.cart_token);
     return res.data.cart_token;
   }
 });
@@ -47,31 +47,38 @@ export const fetchCartToken = createAsyncThunk("fetchCartToken", async () => {
 export const fetchCart = createAsyncThunk("fetchCart", async (params) => {
   const couponCode = params?.couponCode || "";
 
-  const cart_token = localStorage.getItem("cart_token");
+  const cart_token = localStorage.getItem("makatee_cart_token");
   const res = await cartApi({
     cart_token: cart_token || "",
     coupon_code: couponCode,
   });
   if (res.status == 1) {
     res.error && toast.error(res.error);
-    if(res.msg && res.msg != 'Cart Data') toast.success(res.msg);
+    if (res.msg && res.msg != "Cart Data") toast.success(res.msg);
     return res.data;
   } else {
     res?.error && toast.error(res.error || "Failed to fetch cart");
-    return {};  // Return an empty object on failure
+    return {}; // Return an empty object on failure
   }
 });
 
 export const addToCartThunk = createAsyncThunk(
   "addToCartThunk",
   async (params, { dispatch }) => {
-    const { productVariantId = "", qty = 1 } = params;
+    const {
+      productVariantId = "",
+      qty = 1,
+      custom_text = "",
+      custom_photo = "",
+    } = params;
 
-    const cart_token = localStorage.getItem("cart_token");
+    const cart_token = localStorage.getItem("makatee_cart_token");
     const res = await addToCartApi({
       cart_token: cart_token || "",
       product_variant_id: productVariantId,
       qty: qty,
+      custom_photo: custom_photo || "",
+      custom_text: custom_text || "",
     });
 
     if (res.status == 1) {
@@ -88,7 +95,7 @@ export const deleteFromCart = createAsyncThunk(
   async (params, { dispatch }) => {
     const { productVariantId = "" } = params;
 
-    const cart_token = localStorage.getItem("cart_token");
+    const cart_token = localStorage.getItem("makatee_cart_token");
     const res = await removeFromCartApi({
       cart_token: cart_token || "",
       product_variant_id: productVariantId,

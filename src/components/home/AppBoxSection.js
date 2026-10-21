@@ -6,7 +6,7 @@ function AppBoxSection() {
       <div className="container">
         <div className="row">
           <div className="col-12">
-            <div className="download-app-box">
+            <div className="download-app">
               <div className="row">
                 <div
                   className="col-12 col-md-6"

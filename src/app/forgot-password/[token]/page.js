@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import ProductListPage from "@/views/product/ProductListPage";
+import ResetPasswordPage from "@/views/reset-password/ResetPasswordPage";
 
 export default function () {
   return (
     <Suspense>
-      <ProductListPage />
+      <ResetPasswordPage />
     </Suspense>
   );
 }

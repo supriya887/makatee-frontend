@@ -12,80 +12,105 @@ import MenuContainerDesktop from "./MenuContainerDesktop";
 import MenuContainerMobile from "./MenuContainerMobile";
 import { menuCategoryApi } from "@/api";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import MenuContainerSection from "./MenuContainerSection";
 
-function Header() {
-  const [menuCategoryList, setMenuCategoryList] = useState({});
+function Header({ categoryMenu, categoryList }) {
+  const { contactus_details } = useSelector((state) => state.app);
+  const { access_token } = useSelector((state) => state.user);
+  const { wishlistItems } = useSelector((state) => state.wishlist);
 
-  const [accessToken, setAccessToken] = useState("");
+  const searchParams = useSearchParams();
+
+  const urlParams = new URLSearchParams(searchParams);
+
+  const [category, setCategory] = useState(urlParams?.get("category") || "");
+  const [searchTerm, setSearchTerm] = useState(
+    urlParams?.get("search_term") || ""
+  );
+
+  const cartData = useSelector((state) => state.cart);
+  const cart = cartData?.cart || {};
 
   const router = useRouter();
 
-  useEffect(() => {
-    let t = localStorage.getItem("makatee-access-token");
-    setAccessToken(t);
-  }, []);
+  const handleSearch = (e) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    getMenuCategoryApi();
-  }, []);
+    const term = searchTerm?.trim();
 
-  const getMenuCategoryApi = async () => {
-    const res = await menuCategoryApi();
-
-    if (res?.status == 1) {
-      setMenuCategoryList(res?.data);
+    if (term) {
+      router.push(`/search?category=${category}&search_term=${term}`);
     } else {
-      res?.error && toast.error(res?.error);
+      // Optional fallback
+      router.push(`/search?category=${category}`);
     }
   };
 
   return (
-    <div>
-      <div className="container position-relative ">
+    <header>
+      <div className="container position-relative">
         <div className="headerbox">
           <div className="row">
-            <div className="col-6 col-md-3">
+            <div className="col-3 col-sm-3">
               <a className="navbar-brand" href="/">
                 <img src="/assets/images/logo.png" alt="" />{" "}
               </a>
             </div>
-            <div className="col-6 col-md-9">
+            <div className="col-9 col-sm-9">
               <div className="main-header">
                 <div className="right-contact-box">
                   <div className="d-none d-xl-block">
                     <div className="search-box">
                       <div className="top-search">
-                        <form>
+                        <form onSubmit={handleSearch}>
                           <div className="inner-form">
                             <div className="input-field first-wrap">
-                              <div className="input-select">
+                              <div className="input-select custom-select">
                                 <select
-                                  data-trigger=""
+                                  onChange={(e) => setCategory(e.target.value)}
+                                  value={category}
                                   name="choices-single-default"
+                                  className="select-trigger"
                                 >
-                                  <option placeholder="">All Categories</option>
-                                  <option>New Arrivals</option>
-                                  <option>Sale</option>
-                                  <option>Ladies</option>
+                                  <option value="">SHOP BY CATEGORIES</option>
+                                  <option value="trophy">TROPHY</option>
+                                  <option value="uniform">UNIFORM</option>
+
+                                  {/* <option>Ladies</option>
                                   <option>Men</option>
                                   <option>Clothing</option>
                                   <option>Footwear</option>
-                                  <option>Accessories</option>
+                                  <option>Accessories</option> */}
                                 </select>
                               </div>
                             </div>
+
                             <div className="input-field second-wrap">
                               <input
                                 id="search"
                                 type="text"
-                                placeholder="Search for items..."
+                                value={searchTerm}
+                                placeholder="Search Products..."
+                                onChange={(e) => setSearchTerm(e.target.value)}
                               />
                             </div>
+                            {searchTerm && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  setSearchTerm("");
+                                  router.push(
+                                    `/search?category=${category}&search_term=${""}`
+                                  );
+                                }}
+                                className="btn-close"
+                              ></button>
+                            )}
                             <div className="input-field third-wrap">
-                              <button className="btn-search" type="button">
-                                {/* <ion-icon name="search-outline" /> */}
-                                <IoSearch color="white" />
+                              <button className="btn-search" type="submit">
+                                <IoSearch />
                               </button>
                             </div>
                           </div>
@@ -93,46 +118,48 @@ function Header() {
                       </div>
                     </div>
                     <div className="mobile-search">
-                      <img
-                        src="/assets/images/search.png"
+                      <div
+                        className="icon"
                         data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop"
-                        alt=""
-                      />
+                      >
+                        <ion-icon name="search-outline"></ion-icon>
+                      </div>
                     </div>
                   </div>
-                  <div className="top-links call-btn">
+                  <div className="top-links call-btn d-none">
                     <div className="icon">
                       <IoCallOutline />
                       {/* <ion-icon name="call-outline" /> */}
                     </div>
-                    <a href="tel:919819207803">
+                    {/* <a href="tel:919819207803">
                       <div className="call-box-content">
                         <small>Need Help?</small>
-                        <br /> +91 98192 07803
+                        <br />
+                        {contactus_details.mobile}
                       </div>
-                    </a>
+                    </a> */}
                   </div>
                   <div className="top-links">
                     <ul>
                       <li className="login-btn">
                         <div
                           onClick={() =>
-                            accessToken && router.push(`/dashboard`)
+                            access_token && router.push(`/dashboard`)
                           }
-                          className={!accessToken ? "dropdown" : null}
+                          className={!access_token ? "dropdown" : null}
                         >
                           <a
                             href="#"
                             className="dropdown-toggle"
-                            data-bs-toggle="dropdown"
+                            data-bs-toggle={!access_token ? "dropdown" : null}
                           >
                             <div className="icon user-icon">
                               {/* <ion-icon name="person-outline" /> */}
                               <IoPersonOutline />
                             </div>
                           </a>
-                          <div className="dropdown-menu dropdown-menu-right">
+                          <div className={`dropdown-menu dropdown-menu-right`}>
                             <ul className="shopping-cart-popup">
                               <h5>
                                 Welcome
@@ -161,7 +188,9 @@ function Header() {
                       <li className="wishlist-btn">
                         <a href="/wishlist" className="">
                           <div className="icon">
-                            <div className="cart-item-counter">1</div>
+                            <div className="cart-item-counter">
+                              {wishlistItems?.length || "0"}
+                            </div>
                             {/* <ion-icon name="heart-outline" /> */}
                             <IoHeartOutline />
                           </div>
@@ -170,12 +199,14 @@ function Header() {
                       <li className="cart-btn">
                         <div className="dropdown">
                           <a
-                            href=""
+                            href="/cart"
                             className="dropdown-toggle"
-                            data-bs-toggle="dropdown"
+                            data-bs-toggle=""
                           >
                             <div className="icon">
-                              <div className="cart-item-counter">1</div>
+                              <div className="cart-item-counter">
+                                {cart?.item_list?.length || 0}
+                              </div>
                               {/* <ion-icon name="cart-outline" /> */}
                               <IoCartOutline />
                             </div>
@@ -183,90 +214,71 @@ function Header() {
                           <div className="dropdown-menu dropdown-menu-right">
                             <ul className="shopping-cart-popup">
                               <h5>Your Cart</h5>
-                              <hr />
-                              <li className="clearfix">
-                                <div className="row">
-                                  <div className="col-3">
-                                    <img
-                                      src="/assets/images/product-img/10255.webp"
-                                      alt=""
-                                      className="img-fluid"
-                                    />
-                                  </div>
-                                  <div className="col-5">
-                                    <div>
-                                      <span className="item-name">
-                                        Lorem ipsum dolor sit amet consectetur
-                                        adipisicing elit
-                                      </span>
-                                      <span className="item-quantity">
-                                        Quantity: 01
-                                      </span>
+
+                              {cart?.item_list?.length > 0 ? (
+                                <>
+                                  {cart?.item_list?.map((el, i) => {
+                                    return (
+                                      <li key={i} className="clearfix">
+                                        <div className="row">
+                                          <div className="col-3">
+                                            <img
+                                              src={el?.variant?.image_path}
+                                              alt=""
+                                              className="img-fluid"
+                                            />
+                                          </div>
+                                          <div className="col-5">
+                                            <div>
+                                              <span className="item-name">
+                                                {
+                                                  el?.variant?.product
+                                                    ?.product_name
+                                                }
+                                              </span>
+                                              <span className="item-quantity">
+                                                Quantity: {el?.qty}
+                                              </span>
+                                            </div>
+                                          </div>
+                                          <div className="col-4">
+                                            {" "}
+                                            <span className="item-price">
+                                              ₹ {el?.total_price}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </li>
+                                    );
+                                  })}
+
+                                  {access_token ? (
+                                    <div className="d-flex gap-2">
+                                      <a
+                                        href="/cart"
+                                        className="common-btn common-btn-purple"
+                                      >
+                                        Cart
+                                      </a>
+                                      <a
+                                        href="/checkout"
+                                        className="common-btn common-btn-purple"
+                                      >
+                                        Checkout
+                                      </a>
                                     </div>
-                                  </div>
-                                  <div className="col-4">
-                                    {" "}
-                                    <span className="item-price">₹ 849.99</span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="clearfix">
-                                <div className="row">
-                                  <div className="col-3">
-                                    <img
-                                      src="/assets/images/product-img/10255.webp"
-                                      alt=""
-                                      className="img-fluid"
-                                    />
-                                  </div>
-                                  <div className="col-5">
-                                    <div>
-                                      <span className="item-name">
-                                        Lorem ipsum dolor sit amet consectetur
-                                        adipisicing elit
-                                      </span>
-                                      <span className="item-quantity">
-                                        Quantity: 01
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col-4">
-                                    {" "}
-                                    <span className="item-price">₹ 849.99</span>
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="clearfix">
-                                <div className="row">
-                                  <div className="col-3">
-                                    <img
-                                      src="/assets/images/product-img/10255.webp"
-                                      alt=""
-                                      className="img-fluid"
-                                    />
-                                  </div>
-                                  <div className="col-5">
-                                    <div>
-                                      <span className="item-name">
-                                        Lorem ipsum dolor sit, amet
-                                      </span>
-                                      <span className="item-quantity">
-                                        Quantity: 01
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <div className="col-4">
-                                    {" "}
-                                    <span className="item-price">₹ 849.99</span>
-                                  </div>
-                                </div>
-                              </li>
-                              <a
-                                href="/checkout-guest"
-                                className="common-btn common-btn-purple"
-                              >
-                                Checkout
-                              </a>
+                                  ) : (
+                                    <a
+                                      href="/login"
+                                      className="common-btn common-btn-purple"
+                                    >
+                                      Login
+                                    </a>
+                                  )}
+                                </>
+                              ) : (
+                                <p>Your cart is currently empty.</p>
+                              )}
                             </ul>
                           </div>
                         </div>
@@ -281,28 +293,54 @@ function Header() {
                       alt=""
                     />
                   </div>
+                  {!categoryMenu && (
+                    <button
+                      className="navbar-toggler"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasMenuSection"
+                      aria-controls="offcanvasMenuSection"
+                      aria-label="Toggle navigation"
+                    >
+                      <span className="navbar-toggler-icon" />
+                    </button>
+                  )}
                 </div>
-                <nav className="navbar navbar-expand-xl">
-                  <button
-                    className="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasNavbar"
-                    aria-controls="offcanvasNavbar"
-                    aria-label="Toggle navigation"
-                  >
-                    <span className="navbar-toggler-icon" />
-                  </button>
-                </nav>
+                {categoryMenu ? (
+                  <nav className="navbar navbar-expand-xl">
+                    <button
+                      className="navbar-toggler"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasNavbar"
+                      aria-controls="offcanvasNavbar"
+                      aria-label="Toggle navigation"
+                    >
+                      <span className="navbar-toggler-icon" />
+                    </button>
+                  </nav>
+                ) : null}
               </div>
             </div>
           </div>
           <div className="col-12 d-block d-xl-none"></div>
         </div>
       </div>
-      <MenuContainerDesktop category={menuCategoryList} />
-      <MenuContainerMobile category={menuCategoryList} />
-    </div>
+      {/* {menuCategories?.length > 0 && (
+        <MenuContainerDesktop category={menuCategories || []} />
+      )}
+      {menuCategories?.length > 0 && (
+        <MenuContainerMobile category={menuCategories || []} />
+      )} */}
+
+      {!categoryMenu ? <MenuContainerSection /> : null}
+      {categoryList?.length > 0 && (
+        <MenuContainerDesktop category={categoryList || []} />
+      )}
+      {categoryList?.length > 0 && (
+        <MenuContainerMobile category={categoryList || []} />
+      )}
+    </header>
   );
 }
 

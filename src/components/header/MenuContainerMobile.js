@@ -35,7 +35,7 @@ function MenuContainerMobile({ category }) {
                       <li key={categoryIndex} className="nav-item dropdown">
                         <a
                           className="nav-link active"
-                          href="#"
+                          href={`/${categoryItem?.full_slug}`}
                           data-bs-toggle="dropdown"
                         >
                           {categoryItem?.category_name}{" "}
@@ -53,8 +53,14 @@ function MenuContainerMobile({ category }) {
                                     (catChildItem, catChildIndex) => {
                                       return (
                                         <li key={`child-${catChildIndex}`}>
-                                          <a href={`/products/${catChildItem?.slug}`}>
-                                            {catChildItem?.category_name}
+                                          <a
+                                            href={`/${catChildItem?.full_slug}`}
+                                          >
+                                            {catChildItem?.category_name}{" "}
+                                            <span className="small">
+                                              {" "}
+                                              - {catChildItem?.products_count}
+                                            </span>
                                           </a>
                                         </li>
                                       );

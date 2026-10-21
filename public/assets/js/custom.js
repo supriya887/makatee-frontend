@@ -206,7 +206,7 @@ rangeInput.forEach((input) => {
 $(document).ready(function () {
   // Swiper: Slider
   var swiper = new Swiper('.trophy-category-slider', {
-    slidesPerView: 7,
+    slidesPerView: 5,
     loop: false,
     autoplay: true,
     navigation: {
@@ -230,13 +230,8 @@ $(document).ready(function () {
       },
       767: {
         slidesPerView: 5
-      },
-      1024: {
-        slidesPerView: 6
-      },
-      1920: {
-        slidesPerView: 7
-      },
+      }
+    
 
     },
   });
@@ -281,7 +276,8 @@ $(document).ready(function () {
 $(document).ready(function () {
   // Swiper: Slider
   var swiper = new Swiper('.uniform-category-slider', {
-    slidesPerView: 7,
+    slidesPerView: 5,
+    direction:vertical,
     loop: false,
     autoplay: false,
     navigation: {
@@ -307,12 +303,7 @@ $(document).ready(function () {
       767: {
         slidesPerView: 5
       },
-      1024: {
-        slidesPerView: 6
-      },
-      1920: {
-        slidesPerView: 7
-      },
+     
 
     },
   });

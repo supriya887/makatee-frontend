@@ -1,10 +1,10 @@
 import React, { Suspense } from "react";
-import ProductListPage from "@/views/product/ProductListPage";
+import VideosPage from "@/views/product/VideosPage";
 
 export default function () {
   return (
     <Suspense>
-      <ProductListPage />
+     <VideosPage />
     </Suspense>
   );
 }

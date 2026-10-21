@@ -1,17 +1,183 @@
 "use client";
 
+import {
+  editProfileApi,
+  getAddressEditApi,
+  getCountryListApi,
+  getStateListApi,
+  saveAddressApi,
+} from "@/api";
 import CustomDropdown from "@/components/custom/CustomDropdown";
 import Layout1 from "@/components/layout/Layout1";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
-function AddAddressPage({ onCancel }) {
+function AddAddressPage({ onSuccess, addressId, onCancel }) {
+  const { user_data } = useSelector((state) => state.user);
+
+  const [countryList, setCountryList] = useState([]);
+  const [countryList2, setCountryList2] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [stateList2, setStateList2] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const [valErrors, setValErrors] = useState({});
   const [formValues, setFormValues] = useState({
+    address_id: "",
+    shipping_first_name: user_data?.first_name || "",
+    shipping_last_name: user_data?.last_name || "",
+    shipping_phone: user_data?.phone || "",
+    shipping_email: user_data?.email || "",
+
+    shipping_address_1: "",
+    shipping_address_2: "",
+    shipping_city: "",
+    shipping_state_id: "",
+    shipping_state_name: "",
+    shipping_country_id: "",
+    shipping_pincode: "",
+    billing_first_name: user_data?.first_name || "",
+    billing_last_name: user_data?.last_name || "",
+    billing_phone: user_data?.phone || "",
+    billing_email: user_data?.email || "",
+
+    billing_address_1: "",
+    billing_address_2: "",
+    billing_city: "",
+    billing_state_id: "",
+    billiing_state_name: "",
+    billing_country_id: "",
+    billing_pincode: "",
+    address_type: "Home",
     billing_same_as_shipping: true,
   });
 
-  const handleOnChange = (e) => {
+  useEffect(() => {
+    async function fetchData() {
+      await countryListApi();
+      if (addressId) await addressDetailApi();
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    setFormValues((prev) => ({ ...prev, shipping_state_id: "" }));
+
+    if (formValues?.shipping_country_id) {
+      getStateList();
+    } else {
+      setStateList([]);
+    }
+  }, [formValues?.shipping_country_id]);
+
+  useEffect(() => {
+    setFormValues((prev) => ({ ...prev, billing_state_id: "" }));
+
+    if (formValues?.billing_country_id) {
+      getStateList2();
+    } else {
+      setStateList2([]);
+    }
+  }, [formValues?.billing_country_id]);
+
+  const addressDetailApi = async () => {
+    let response = await getAddressEditApi({
+      address_id: addressId,
+    });
+
+    if (response?.status == 1) {
+      setFormValues((prev) => ({
+        ...prev,
+        address_id: response?.data?.id,
+        shipping_first_name: response?.data?.shipping_first_name,
+        shipping_last_name: response?.data?.shipping_last_name,
+        shipping_phone: response?.data?.shipping_phone,
+        shipping_email: response?.data?.shipping_email,
+
+        shipping_address_1: response?.data?.shipping_address_1,
+        shipping_address_2: response?.data?.shipping_address_2,
+        shipping_country_id: response?.data?.shipping_country_id,
+        shipping_city: response?.data?.shipping_city,
+        shipping_state_id: response?.data?.shipping_state_id,
+        shipping_pincode: response?.data?.shipping_pincode,
+        billing_first_name: response?.data?.billing_first_name,
+        billing_last_name: response?.data?.billing_last_name,
+        billing_phone: response?.data?.billing_phone,
+        billing_email: response?.data?.billing_email,
+
+        billing_address_1: response?.data?.billing_address_1,
+        billing_address_2: response?.data?.billing_address_2,
+        billing_country_id: response?.data?.billing_country_id,
+        billing_city: response?.data?.billing_city,
+        billing_state_id: response?.data?.billing_state_id,
+        billing_pincode: response?.data?.billing_pincode,
+        address_type: response?.data?.address_type,
+        billing_same_as_shipping:
+          response?.data?.billing_same_as_shipping == "1" ? true : false,
+      }));
+    } else {
+      response?.error && toast.error(response?.error);
+    }
+  };
+
+  const countryListApi = async () => {
+    const res = await getCountryListApi();
+
+    if (res?.status == 1) {
+      setCountryList(res?.data);
+      setCountryList2(res?.data);
+
+      if (!formValues?.address_id) {
+        setFormValues((prev) => ({
+          ...prev,
+          shipping_country_id: res?.data[0]?.id,
+          billing_country_id: res?.data[0]?.id,
+        }));
+      }
+    }
+  };
+
+  const getStateList = async () => {
+    let response = await getStateListApi({
+      country_id: formValues?.shipping_country_id,
+    });
+
+    if (response?.status == 1) {
+      setStateList(response?.data);
+      if (!addressId) {
+        if (response?.data?.length) {
+          setFormValues((prev) => ({
+            ...prev,
+            shipping_state_id: response?.data[0]?.id,
+          }));
+        }
+      }
+    }
+  };
+
+  const getStateList2 = async () => {
+    let response = await getStateListApi({
+      country_id: formValues?.billing_country_id,
+    });
+
+    if (response?.status == 1) {
+      setStateList2(response?.data);
+      if (!addressId) {
+        if (response?.data?.length) {
+          setFormValues((prev) => ({
+            ...prev,
+            billing_state_id: response?.data[0]?.id,
+          }));
+        }
+      }
+    }
+  };
+
+  const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    console.log(e.target.type, checked, name);
+    // console.log(e.target.type);
 
     if (type == "checkbox") {
       setFormValues((prev) => ({
@@ -26,53 +192,147 @@ function AddAddressPage({ onCancel }) {
       [name]: value,
     }));
   };
+
+  const saveAddress = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    let response = await saveAddressApi({
+      ...formValues,
+      billing_same_as_shipping:
+        formValues?.billing_same_as_shipping == true ? "1" : "0",
+      shipping_country_code_id: 95,
+      billing_country_code_id: 95,
+    });
+    if (response?.status == 1) {
+      clearData();
+      onSuccess();
+    } else {
+      setValErrors(response?.error_array);
+      response?.error && toast.error(response?.error);
+    }
+    setLoading(false);
+  };
+
+  const clearData = () => {
+    setFormValues({
+      address_id: "",
+      shipping_first_name: "",
+      shipping_last_name: "",
+      shipping_phone: "",
+      shipping_email: "",
+
+      shipping_address_1: "",
+      shipping_address_2: "",
+      shipping_city: "",
+      shipping_state_id: "",
+      shipping_country_id: "",
+      shipping_pincode: "",
+      billing_first_name: "",
+      billing_last_name: "",
+      billing_phone: "",
+      billing_email: "",
+
+      billing_address_1: "",
+      billing_address_2: "",
+      billing_city: "",
+      billing_state_id: "",
+      billing_country_id: "",
+      billing_pincode: "",
+      address_type: "Home",
+      billing_same_as_shipping: true,
+    });
+  };
+
   return (
     <section>
       <div className="add-address-box bg-white">
         <div className="col-12 col-md-12 mx-auto">
-          <form action="" className="checkout-form" method="post">
+          <form onSubmit={saveAddress} className="checkout-form">
             <h5>
-              <strong>Billing Address</strong>
+              <strong>Shipping Address</strong>
             </h5>
             <br />
-            <div className="row billingaddress">
-              <div className=" mb-3 col-12 col-md-6">
-                <label htmlFor="" className="form-label">
-                  Full Name*
+            <div className="row shippingaddress">
+              <div className=" mb-3 col-12 col-sm-6">
+                <label htmlFor="shipping_first_name" className="form-label">
+                  First Name*
                 </label>
                 <input
+                  className="form-control input-field"
+                  autoComplete="off"
+                  value={formValues?.shipping_first_name || ""}
+                  // placeholder="First Name"
+                  onChange={handleInputChange}
                   type="text"
-                  className="form-control"
-                  id=""
-                  aria-describedby=""
+                  name="shipping_first_name"
+                  id="shipping_first_name"
                 />
-                <div id="Full_Name" className="form-text" />
+                {valErrors.shipping_first_name && (
+                  <small className="text-danger">
+                    {valErrors.shipping_first_name}
+                  </small>
+                )}
+              </div>
+              <div className=" mb-3 col-12 col-sm-6">
+                <label htmlFor="shipping_last_name">Last name*</label>
+                <input
+                  className="form-control input-field"
+                  // placeholder="Last Name"
+                  autoComplete="off"
+                  value={formValues?.shipping_last_name || ""}
+                  type="text"
+                  onChange={handleInputChange}
+                  name="shipping_last_name"
+                  id="shipping_last_name"
+                />
+                {valErrors.shipping_last_name && (
+                  <small className="text-danger">
+                    {valErrors.shipping_last_name}
+                  </small>
+                )}
               </div>
               <div className=" mb-3   col-sm-6 col-12">
-                <label htmlFor="" className="form-label">
+                <label htmlFor="shipping_email" className="form-label">
                   Email*
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   className="form-control input-field"
-                  name="billing_email"
-                  id="billing_email"
-                  defaultValue=""
+                  // placeholder="Email ID"
+                  value={formValues?.shipping_email || ""}
+                  onChange={handleInputChange}
+                  name="shipping_email"
+                  id="shipping_email"
                 />
+                {valErrors.shipping_email && (
+                  <small className="text-danger">
+                    {valErrors.shipping_email}
+                  </small>
+                )}
               </div>
               <div className=" mb-3 col-sm-6 col-12">
-                <label htmlFor="" className="form-label">
+                <label htmlFor="shipping_phone" className="form-label">
                   Phone*
                 </label>
                 <input
+                  className="form-control number"
+                  maxLength={10}
+                  minLength={10}
+                  // placeholder="Phone"
+                  value={formValues?.shipping_phone || ""}
+                  onChange={handleInputChange}
+                  name="shipping_phone"
+                  id="shipping_phone"
                   type="text"
-                  className="form-control input-field number"
-                  name="billing_phone"
-                  id="billing_phone"
-                  defaultValue=""
                 />
+                {valErrors.shipping_phone && (
+                  <small className="text-danger">
+                    {valErrors.shipping_phone}
+                  </small>
+                )}
               </div>
-              <div className=" mb-3   col-sm-6 col-12">
+              {/* <div className=" mb-3   col-sm-6 col-12">
                 <label htmlFor="" className="form-label">
                   Landmark*
                 </label>
@@ -83,112 +343,135 @@ function AddAddressPage({ onCancel }) {
                   id="billing_email"
                   defaultValue=""
                 />
-              </div>
+              </div> */}
               <div className=" mb-3 col-12">
-                <label htmlFor="" className="form-label">
-                  Address*
+                <label htmlFor="shipping_address_1" className="form-label">
+                  Address1
                 </label>
                 <textarea
+                  className="form-control "
+                  // placeholder="Address Line 1"
+                  value={formValues?.shipping_address_1 || ""}
+                  onChange={handleInputChange}
+                  name="shipping_address_1"
+                  id="shipping_address_1"
                   type="text"
-                  className="form-control"
-                  id=""
-                  aria-describedby=""
-                  defaultValue={""}
                 />
-                <div id="billing_address" className="form-text" />
+                {valErrors.shipping_address_1 && (
+                  <small className="text-danger">
+                    {valErrors.shipping_address_1}
+                  </small>
+                )}
+              </div>
+
+              <div className=" mb-3 col-12">
+                <label htmlFor="shipping_address_2" className="form-label">
+                  Address2
+                </label>
+                <textarea
+                  className="form-control "
+                  // placeholder="Address Line 2"
+                  value={formValues?.shipping_address_2 || ""}
+                  onChange={handleInputChange}
+                  name="shipping_address_2"
+                  id="shipping_address_2"
+                  type="text"
+                />
+                {valErrors.shipping_address_2 && (
+                  <small className="text-danger">
+                    {valErrors.shipping_address_2}
+                  </small>
+                )}
               </div>
               <div className=" mb-3  col-sm-6 col-12">
-                <label htmlFor="" className="form-label">
+                <label htmlFor="shipping_country_id" className="form-label">
                   Country*
                 </label>
-                <CustomDropdown
-                  value={formValues?.billing_country}
-                  onChange={handleOnChange}
+                <select
                   className="form-control input-field countrylistbilling"
-                  name="billing_country"
-                  id="billing_country"
-                  required=""
-                  readOnly=""
-                  options={[
-                    { id: "", label: "Select Country" },
-                    { id: 99, label: "India" },
-                  ]}
-                />
+                  name="shipping_country_id"
+                  id="shipping_country_id"
+                  placeholder="Country"
+                  onChange={handleInputChange}
+                  value={formValues?.shipping_country_id || ""}
+                >
+                  {countryList?.length > 0 &&
+                    countryList?.map((item, index) => {
+                      return (
+                        <option key={index} value={item.id}>
+                          {item.country_name}
+                        </option>
+                      );
+                    })}
+                </select>
+                {valErrors.shipping_country_id && (
+                  <small className="text-danger">
+                    {valErrors.shipping_country_id}
+                  </small>
+                )}
               </div>
               <div className=" mb-3 col-sm-6 col-12">
-                <label htmlFor="" className="form-label">
+                <label htmlFor="shipping_state_id" className="form-label">
                   State*
                 </label>
-                <CustomDropdown
-                  value={formValues?.billing_state}
-                  onChange={handleOnChange}
+                <select
+                  name="shipping_state_id"
+                  id="shipping_state_id"
+                  placeholder="State"
+                  onChange={handleInputChange}
                   className="form-control input-field countrylistbilling"
-                  name="billing_state"
-                  id="billing_state"
-                  required=""
-                  readOnly=""
-                  options={[
-                    { id: "", label: "Select State" },
-                    { id: 1475, label: "Andaman And Nicobar Islands" },
-                    { id: 1476, label: "Andhra Pradesh" },
-                    { id: 1477, label: "Arunachal Pradesh" },
-                    { id: 1478, label: "Assam" },
-                    { id: 1479, label: "Bihar" },
-                    { id: 1480, label: "Chandigarh" },
-                    { id: 1481, label: "Dadra And Nagar Haveli" },
-                    { id: 1482, label: "Daman And Diu" },
-                    { id: 1483, label: "Delhi" },
-                    { id: 1484, label: "Goa" },
-                    { id: 1485, label: "Gujarat" },
-                    { id: 1486, label: "Haryana" },
-                    { id: 1487, label: "Himachal Pradesh" },
-                    { id: 1488, label: "Jammu And Kashmir" },
-                    { id: 1489, label: "Karnataka" },
-                    { id: 1490, label: "Kerala" },
-                    { id: 1491, label: "Lakshadweep Islands" },
-                    { id: 1492, label: "Madhya Pradesh" },
-                    { id: 1493, label: "Maharashtra" },
-                    { id: 1494, label: "Manipur" },
-                    { id: 1495, label: "Meghalaya" },
-                    { id: 1496, label: "Mizoram" },
-                    { id: 1497, label: "Nagaland" },
-                    { id: 1498, label: "Orissa" },
-                    { id: 1499, label: "Pondicherry" },
-                    { id: 1500, label: "Punjab" },
-                    { id: 1501, label: "Rajasthan" },
-                    { id: 1502, label: "Sikkim" },
-                    { id: 1503, label: "Tamil Nadu" },
-                    { id: 1504, label: "Tripura" },
-                    { id: 1505, label: "Uttar Pradesh" },
-                    { id: 1506, label: "West Bengal" },
-                  ]}
-                />
+                  value={formValues?.shipping_state_id || ""}
+                >
+                  {stateList?.length > 0 &&
+                    stateList?.map((item, index) => {
+                      return (
+                        <option key={index} value={item.id}>
+                          {item.state_name}
+                        </option>
+                      );
+                    })}
+                </select>
+                {valErrors.shipping_state_id && (
+                  <small className="text-danger">
+                    {valErrors.shipping_state_id}
+                  </small>
+                )}
               </div>
               <div className=" mb-3 col-sm-6 col-12">
-                <label htmlFor="" className="form-label">
+                <label htmlFor="shipping_city" className="form-label">
                   City*
                 </label>
                 <input
-                  type="text"
                   className="form-control input-field"
-                  name="billing_city"
-                  id="billing_city"
-                  defaultValue=""
-                  required=""
+                  value={formValues?.shipping_city || ""}
+                  onChange={handleInputChange}
+                  name="shipping_city"
+                  id="shipping_city"
+                  type="text"
                 />
+                {valErrors.shipping_city && (
+                  <small className="text-danger">
+                    {valErrors.shipping_city}
+                  </small>
+                )}
               </div>
               <div className=" mb-3   col-sm-6 col-12">
-                <label htmlFor="" className="form-label">
+                <label htmlFor="shipping_pincode" className="form-label">
                   Zip/Postal Code*
                 </label>
                 <input
-                  type="text"
                   className="form-control input-field"
-                  name="billing_zip"
-                  id="billing_zip"
-                  defaultValue=""
-                  required=""
+                  value={formValues?.shipping_pincode || ""}
+                  onChange={handleInputChange}
+                  name="shipping_pincode"
+                  id="shipping_pincode"
+                  type="text"
                 />
+                {valErrors.shipping_pincode && (
+                  <small className="text-danger">
+                    {valErrors.shipping_pincode}
+                  </small>
+                )}
               </div>
               <div className="col-12">
                 <div className="add-address-box p-0">
@@ -198,18 +481,26 @@ function AddAddressPage({ onCancel }) {
                     </h6>
                     <ul className="d-flex">
                       <li className="me-3">
-                        <div className="form-check">
+                        <div
+                          className="form-check pointer_cursor"
+                          onClick={() =>
+                            setFormValues((prev) => ({
+                              ...prev,
+                              address_type: "Home",
+                            }))
+                          }
+                        >
                           <input
                             className="form-check-input"
                             type="radio"
-                            name="exampleRadios"
-                            id="exampleRadios1"
-                            defaultValue="option1"
-                            defaultChecked=""
+                            name={'Home'}
+                            id={'Home'}
+                            checked={formValues?.address_type == "Home"}
+                            readOnly
                           />
                           <label
                             className="form-check-label"
-                            htmlFor="exampleRadios1"
+                            htmlFor={'Home'}
                           >
                             <strong>
                               Home <br />
@@ -219,18 +510,26 @@ function AddAddressPage({ onCancel }) {
                         </div>
                       </li>
                       <li className="me-3">
-                        <div className="form-check">
+                        <div
+                          className="form-check pointer_cursor"
+                          onClick={() =>
+                            setFormValues((prev) => ({
+                              ...prev,
+                              address_type: "Office",
+                            }))
+                          }
+                        >
                           <input
                             className="form-check-input"
                             type="radio"
-                            name="exampleRadios"
-                            id="exampleRadios1"
-                            defaultValue="option1"
-                            defaultChecked=""
+                            name={'Office'}
+                            id={'Office'}
+                            checked={formValues?.address_type == "Office"}
+                            readOnly
                           />
                           <label
                             className="form-check-label"
-                            htmlFor="exampleRadios1"
+                            htmlFor={'Office'}
                           >
                             <strong>
                               Office <br />
@@ -240,18 +539,26 @@ function AddAddressPage({ onCancel }) {
                         </div>
                       </li>
                       <li className="mr-2">
-                        <div className="form-check">
+                        <div
+                          className="form-check pointer_cursor"
+                          onClick={() =>
+                            setFormValues((prev) => ({
+                              ...prev,
+                              address_type: "Other",
+                            }))
+                          }
+                        >
                           <input
                             className="form-check-input"
                             type="radio"
-                            name="exampleRadios"
-                            id="exampleRadios1"
-                            defaultValue="option1"
-                            defaultChecked=""
+                            name={'Other'}
+                            id={'Other'}
+                            checked={formValues?.address_type == "Other"}
+                            readOnly
                           />
                           <label
                             className="form-check-label"
-                            htmlFor="exampleRadios1"
+                            htmlFor={'Other'}
                           >
                             <strong>Other</strong>
                           </label>
@@ -265,67 +572,110 @@ function AddAddressPage({ onCancel }) {
                 <div className="form-check">
                   <input
                     type="checkbox"
-                    id="shipping_same_as_billing"
+                    id="billing_same_as_shipping"
                     className="form-check-input"
-                    checked={formValues?.shipping_same_as_billing || false}
-                    name="shipping_same_as_billing"
-                    onChange={handleOnChange}
+                    checked={formValues?.billing_same_as_shipping || false}
+                    name="billing_same_as_shipping"
+                    onChange={handleInputChange}
                     readOnly
                   />
                   <label
                     className="form-check-label"
-                    htmlFor="shipping_same_as_billing"
+                    htmlFor="billing_same_as_shipping"
                     style={{ marginLeft: 5 }}
                   >
-                    <h6 className="text-dark">Ship To A Different Address?</h6>
+                    <h6 className="text-dark">
+                      Billing Same As Shipping Address?
+                    </h6>
                   </label>
                 </div>
               </div>
             </div>
-            {!formValues?.shipping_same_as_billing ? (
+            {!formValues?.billing_same_as_shipping ? (
               <div className="row mb-3">
-                <div className="shippingaddress">
+                <div className="billingaddress">
                   <h5>
-                    <strong>Shipping Address</strong>
+                    <strong>Billing Address</strong>
                   </h5>
                   <div className="row billingaddress">
-                    <div className=" mb-3 col-12 col-md-6">
-                      <label htmlFor="" className="form-label">
-                        Full Name*
+                    <div className=" mb-3 col-12 col-sm-6">
+                      <label
+                        htmlFor="billing_first_name"
+                        className="form-label"
+                      >
+                        First Name*
                       </label>
                       <input
+                        className="form-control input-field"
+                        onChange={handleInputChange}
                         type="text"
-                        className="form-control"
-                        id=""
-                        aria-describedby=""
+                        name="billing_first_name"
+                        id="billing_first_name"
+                        value={formValues?.billing_first_name || ""}
                       />
-                      <div id="Full_Name" className="form-text" />
+                      {valErrors.billing_first_name && (
+                        <small className="text-danger">
+                          {valErrors.billing_first_name}
+                        </small>
+                      )}
+                    </div>
+                    <div className=" mb-3 col-12 col-sm-6">
+                      <label htmlFor="billing_last_name" className="form-label">
+                        Last Name*
+                      </label>
+                      <input
+                        className="form-control input-field"
+                        value={formValues?.billing_last_name || ""}
+                        onChange={handleInputChange}
+                        type="text"
+                        name="billing_last_name"
+                        id="billing_last_name"
+                      />
+                      {valErrors.billing_last_name && (
+                        <small className="text-danger">
+                          {valErrors.billing_last_name}
+                        </small>
+                      )}
                     </div>
                     <div className=" mb-3   col-sm-6 col-12">
-                      <label htmlFor="" className="form-label">
+                      <label htmlFor="billing_email" className="form-label">
                         Email
                       </label>
                       <input
-                        type="email"
                         className="form-control input-field"
+                        value={formValues?.billing_email || ""}
+                        onChange={handleInputChange}
                         name="billing_email"
                         id="billing_email"
-                        defaultValue=""
+                        type="text"
                       />
+                      {valErrors.billing_email && (
+                        <small className="text-danger">
+                          {valErrors.billing_email}
+                        </small>
+                      )}
                     </div>
                     <div className=" mb-3 col-sm-6 col-12">
-                      <label htmlFor="" className="form-label">
+                      <label htmlFor="billing_phone" className="form-label">
                         Phone
                       </label>
                       <input
-                        type="text"
                         className="form-control input-field number"
+                        maxLength={10}
+                        minLength={10}
+                        value={formValues?.billing_phone || ""}
+                        onChange={handleInputChange}
                         name="billing_phone"
                         id="billing_phone"
-                        defaultValue=""
+                        type="text"
                       />
+                      {valErrors.billing_phone && (
+                        <small className="text-danger">
+                          {valErrors.billing_phone}
+                        </small>
+                      )}
                     </div>
-                    <div className=" mb-3   col-sm-6 col-12">
+                    {/* <div className=" mb-3   col-sm-6 col-12">
                       <label htmlFor="" className="form-label">
                         Landmark
                       </label>
@@ -336,112 +686,135 @@ function AddAddressPage({ onCancel }) {
                         id="billing_email"
                         defaultValue=""
                       />
-                    </div>
+                    </div> */}
                     <div className=" mb-3 col-12">
-                      <label htmlFor="" className="form-label">
-                        Address*
+                      <label htmlFor="billing_address_1" className="form-label">
+                        Address 1*
                       </label>
                       <textarea
-                        type="text"
                         className="form-control"
-                        id=""
-                        aria-describedby=""
-                        defaultValue={""}
+                        value={formValues?.billing_address_1 || ""}
+                        onChange={handleInputChange}
+                        name="billing_address_1"
+                        id="billing_address_1"
+                        type="text"
                       />
-                      <div id="billing_address" className="form-text" />
+                      {valErrors.billing_address_1 && (
+                        <small className="text-danger">
+                          {valErrors.billing_address_1}
+                        </small>
+                      )}
+                    </div>
+                    <div className=" mb-3 col-12">
+                      <label htmlFor="billing_address_2" className="form-label">
+                        Address 2*
+                      </label>
+                      <textarea
+                        className="form-control"
+                        value={formValues?.billing_address_2 || ""}
+                        onChange={handleInputChange}
+                        name="billing_address_2"
+                        id="billing_address_2"
+                        type="text"
+                      />
+                      {valErrors.billing_address_2 && (
+                        <small className="text-danger">
+                          {valErrors.billing_address_2}
+                        </small>
+                      )}
                     </div>
                     <div className=" mb-3  col-sm-6 col-12">
-                      <label htmlFor="" className="form-label">
+                      <label
+                        htmlFor="billing_country_id"
+                        className="form-label"
+                      >
                         Country
                       </label>
-                      <CustomDropdown
-                        value={formValues?.billing_country}
-                        onChange={handleOnChange}
+                      <select
                         className="form-control input-field countrylistbilling"
-                        name="billing_country"
-                        id="billing_country"
-                        required=""
-                        readOnly=""
-                        options={[{ id: "", label: "India" }]}
-                      />
+                        name="billing_country_id"
+                        id="billing_country_id"
+                        placeholder="Country"
+                        onChange={handleInputChange}
+                        value={formValues?.billing_country_id || ""}
+                      >
+                        {countryList2?.length > 0 &&
+                          countryList2?.map((item, index) => {
+                            return (
+                              <option key={index} value={item.id}>
+                                {item.country_name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                      {valErrors.billing_country_id && (
+                        <small className="text-danger">
+                          {valErrors.billing_country_id}
+                        </small>
+                      )}
                     </div>
                     <div className=" mb-3 col-sm-6 col-12">
                       <label htmlFor="" className="form-label">
                         State
                       </label>
-                      <CustomDropdown
-                        value={formValues?.billing_state}
-                        onChange={handleOnChange}
+                      <select
+                        name="billing_state_id"
+                        id="billing_state_id"
+                        placeholder="State"
+                        onChange={handleInputChange}
                         className="form-control input-field countrylistbilling"
-                        name="billing_state"
-                        id="billing_state"
-                        required=""
-                        readOnly=""
-                        options={[
-                          { id: "", label: "Select State" },
-                          {
-                            id: 1475,
-                            label: "Andaman And Nicobar Islands",
-                          },
-                          { id: 1476, label: "Andhra Pradesh" },
-                          { id: 1477, label: "Arunachal Pradesh" },
-                          { id: 1478, label: "Assam" },
-                          { id: 1479, label: "Bihar" },
-                          { id: 1480, label: "Chandigarh" },
-                          { id: 1481, label: "Dadra And Nagar Haveli" },
-                          { id: 1482, label: "Daman And Diu" },
-                          { id: 1483, label: "Delhi" },
-                          { id: 1484, label: "Goa" },
-                          { id: 1485, label: "Gujarat" },
-                          { id: 1486, label: "Haryana" },
-                          { id: 1487, label: "Himachal Pradesh" },
-                          { id: 1488, label: "Jammu And Kashmir" },
-                          { id: 1489, label: "Karnataka" },
-                          { id: 1490, label: "Kerala" },
-                          { id: 1491, label: "Lakshadweep Islands" },
-                          { id: 1492, label: "Madhya Pradesh" },
-                          { id: 1493, label: "Maharashtra" },
-                          { id: 1494, label: "Manipur" },
-                          { id: 1495, label: "Meghalaya" },
-                          { id: 1496, label: "Mizoram" },
-                          { id: 1497, label: "Nagaland" },
-                          { id: 1498, label: "Orissa" },
-                          { id: 1499, label: "Pondicherry" },
-                          { id: 1500, label: "Punjab" },
-                          { id: 1501, label: "Rajasthan" },
-                          { id: 1502, label: "Sikkim" },
-                          { id: 1503, label: "Tamil Nadu" },
-                          { id: 1504, label: "Tripura" },
-                          { id: 1505, label: "Uttar Pradesh" },
-                          { id: 1506, label: "West Bengal" },
-                        ]}
-                      />
+                        value={formValues?.billing_state_id || ""}
+                      >
+                        {stateList2?.length > 0 &&
+                          stateList2?.map((item, index) => {
+                            return (
+                              <option key={index} value={item.id}>
+                                {item.state_name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                      {valErrors.billing_state_id && (
+                        <small className="text-danger">
+                          {valErrors.billing_state_id}
+                        </small>
+                      )}
                     </div>
                     <div className=" mb-3 col-sm-6 col-12">
-                      <label htmlFor="" className="form-label">
+                      <label htmlFor="billing_city" className="form-label">
                         City
                       </label>
                       <input
-                        type="text"
                         className="form-control input-field"
+                        value={formValues?.billing_city || ""}
+                        onChange={handleInputChange}
                         name="billing_city"
                         id="billing_city"
-                        defaultValue=""
-                        required=""
+                        type="text"
                       />
+                      {valErrors.billing_city && (
+                        <small className="text-danger">
+                          {valErrors.billing_city}
+                        </small>
+                      )}
                     </div>
                     <div className=" mb-3   col-sm-6 col-12">
-                      <label htmlFor="" className="form-label">
+                      <label htmlFor="billing_pincode" className="form-label">
                         Zip/Postal Code
                       </label>
                       <input
-                        type="text"
                         className="form-control input-field"
-                        name="billing_zip"
-                        id="billing_zip"
-                        defaultValue=""
-                        required=""
+                        value={formValues?.billing_pincode || ""}
+                        onChange={handleInputChange}
+                        name="billing_pincode"
+                        id="billing_pincode"
+                        type="text"
                       />
+                      {valErrors.billing_pincode && (
+                        <small className="text-danger">
+                          {valErrors.billing_pincode}
+                        </small>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -451,11 +824,12 @@ function AddAddressPage({ onCancel }) {
 
           <div className="row gap-3">
             <button
+              onClick={saveAddress}
               type="submit"
               className="common-btn common-btn-purple w-25"
-              onClick={() => console.log("Save")}
+              disabled={loading}
             >
-              Save
+              {loading ? "Loading" : "Save"}
             </button>
 
             <button

@@ -1,7 +1,11 @@
 "use client";
 
 import Layout1 from "@/components/layout/Layout1";
-import { addToCartThunk, deleteFromCart } from "@/store/slices/cart-slice";
+import {
+  addToCartThunk,
+  deleteFromCart,
+  fetchCart,
+} from "@/store/slices/cart-slice";
 import { TROPHY_HOME_ROUTE } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -15,16 +19,24 @@ function CartPage() {
 
   const dispatch = useDispatch();
 
+  const { access_token } = useSelector((state) => state.user);
+
   const cartData = useSelector((state) => state.cart);
   const cart = cartData?.cart || {};
-  const [accessToken, setAccessToken] = useState("");
-
-  useEffect(() => {
-    let t = localStorage.getItem("makatee-access-token");
-    setAccessToken(t);
-  }, []);
 
   const cartItems = cart?.item_list || [];
+
+  let currencySymbol = cart?.currency?.html_symbol;
+
+  let cartTotalPrice = parseFloat(cart?.item_total || 0);
+  let discountPrice = parseFloat(cart?.coupon_discount || 0);
+  let deliveryPrice = parseFloat(cart?.delivery_amount || 0);
+  let taxName = cart?.tax_name || "";
+  let deliveryName = cart?.delivery_name || "";
+  let CouponCode = cart?.coupon_code || "";
+  let taxPrice = parseFloat(cart?.tax_amount || 0);
+  let grandTotalPrice = parseFloat(cart?.grand_total || 0);
+
   return (
     <Layout1>
       <section className="cart-section section-space">
@@ -35,12 +47,18 @@ function CartPage() {
                 <a href={`/cart`} className="tab common-btn active">
                   Cart
                 </a>
-                <a href="/address" className="tab common-btn">
-                  Address
+                <a
+                  href={cartItems?.length > 0 ? access_token ? "/checkout" : `/login` : null}
+                  className="tab common-btn"
+                >
+                  Checkout
                 </a>
-                <a href={`/payment-method`} className="tab common-btn">
+                {/* <a
+                  href={access_token ? `/payment-method` : `/login`}
+                  className="tab common-btn"
+                >
                   Payment
-                </a>
+                </a> */}
               </div>
             </div>
           </div>
@@ -55,11 +73,11 @@ function CartPage() {
                       </div>
                       {cartItems.map((el, i) => {
                         return (
-                          <div key={i} className=" cart-product-list p-3">
+                          <div key={i} className=" cart-product-list">
                             <div className="row item">
                               <div className="close">
                                 <a
-                                  style={{ position: "absolute", right: 0 }}
+                                  style={{ position: "absolute", right: 0 , top: 25 }}
                                   onClick={() =>
                                     dispatch(
                                       deleteFromCart({
@@ -73,31 +91,33 @@ function CartPage() {
                                   <IoTrashOutline size={22} />
                                 </a>
                               </div>
-                              <div className="form-check">
+                              {/* <div className="form-check">
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
                                   defaultValue=""
                                   id="flexCheckDefault1"
                                 />
-                              </div>
+                              </div> */}
+                              <div className="col-3 col-sm-3 col-lg-2 col-xl-2 item-img p-0">
                               <a
-                                href={`/products/${el?.variant?.product?.category?.slug}/${el?.variant?.product?.slug}`}
-                                className="col-6 col-md-2 col-lg-2 col-xl-2 item-img p-0"
+                                href={`/product/${el?.variant?.product?.slug}/${el?.variant?.slug}`}
+                                
                               >
                                 <img
                                   src={el?.variant?.image_path}
                                   className="img-fluid"
                                   alt=""
                                 />
-                              </a>
-                              <div className="col-6 col-md-2 col-lg-2 col-xl-2 p-0 item-content">
+                              </a></div>
+                              <div className="col-8 col-sm-4 col-lg-2 col-xl-2 p-0 item-content">
                                 <p> {el?.variant?.product?.product_name}</p>
                                 <div className="d-flex">
                                   <div className="box size mr-2">
-                                    Size :<div> 80mm</div>
+                                    Variant :
+                                    <div> {el?.variant?.variant_name}</div>
                                   </div>
-                                  <div className="box color mr-2">
+                                  {/* <div className="box color mr-2">
                                     {" "}
                                     Color :
                                     <ul>
@@ -111,14 +131,20 @@ function CartPage() {
                                         />
                                       </li>
                                     </ul>
-                                  </div>
+                                  </div> */}
                                 </div>
+                                {el?.custom_text ? (
+                                  <div className="mt-2">
+                                    Text: {el?.custom_text}
+                                  </div>
+                                ) : null}
                               </div>
-                              <div className="col-6 col-md-2 col-lg-2 col-xl-2 p-0">
-                                <div className="product-amt">
+                              <div className="col-2 col-sm-0 d-block d-sm-none" ></div>
+                              <div className="col-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 p-0">
+                                <div className="">
                                   <h4 className="price mb-0">
                                     {" "}
-                                    <strong>₹ {el?.variant?.saleprice}</strong>
+                                    ₹ {el?.variant?.saleprice}
                                   </h4>
                                   {el?.variant?.discount > 0 ? (
                                     <span className="slash-price">
@@ -127,7 +153,7 @@ function CartPage() {
                                   ) : null}
                                 </div>
                               </div>
-                              <div className="col-6 col-md-2 col-lg-2 col-xl-2 p-0">
+                              <div className="col-12 col-sm-3 col-lg-2 col-xl-2 p-0">
                                 <div className="quantity-box">
                                   <div className="quantity">
                                     <div className="input-group  align-items-center">
@@ -176,12 +202,11 @@ function CartPage() {
                                 </div>
                               </div>
                               <div className="col-12 col-md-2 col-lg-2 col-xl-2 p-0">
-                                <div className="product-amt total-amt">
+                                <div className="total-amt">
                                   <h4 className="price mb-0">
                                     {" "}
-                                    <strong>₹ 8767</strong>
+                                    <strong>₹ {el?.total_price}</strong>
                                   </h4>
-                                  <span className="slash-price">₹ 1500</span>
                                 </div>
                               </div>
                             </div>
@@ -189,13 +214,10 @@ function CartPage() {
                         );
                       })}
                       <div className="mobile-none">
-                        <div className="common-btn continue-shopping mt-2">
+                        <div className="common-btn continue-shopping mt-4">
                           {/* <ion-icon name="arrow-back-sharp" /> */}
                           <IoArrowBackSharp size={20} />
-                          <a href={`/${TROPHY_HOME_ROUTE}`}>
-                            {" "}
-                            continue shopping
-                          </a>
+                          <a href={`/`}> continue shopping</a>
                         </div>
                       </div>
                     </div>
@@ -205,19 +227,39 @@ function CartPage() {
                   <div className="cart-right">
                     <div className="coupon-apply">
                       <input
+                        // className="form-control"
+
+                        value={couponCode || cart?.couponCode || ""}
+                        onChange={(e) => {
+                          setCouponCode(e.target.value);
+                        }}
                         type="text"
                         placeholder="Insert your Coupon Code"
                       />
                       <a
-                        href={`/checkout`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (cart?.coupon_code) {
+                            setCouponCode("");
+                            dispatch(fetchCart());
+                          } else {
+                            dispatch(
+                              fetchCart({
+                                couponCode,
+                              })
+                            );
+                          }
+                        }}
                         className="common-btn common-btn-purple"
                       >
-                        Apply
+                        {cart?.coupon_code ? "Remove" : "Apply"}
                       </a>
                     </div>
                     <div className="priceblock-base-container">
                       <div className="priceblock-base-priceheader">
-                        <strong>PRICE DETAILS (28 Items)</strong>
+                        <strong>
+                          PRICE DETAILS ({cart?.item_list?.length || 0} Items)
+                        </strong>
                       </div>
                       <div
                         className="pricebreakup-base-ordersummary"
@@ -226,12 +268,17 @@ function CartPage() {
                         <div className="pricedetail-base-row ">
                           <ul>
                             <li>
-                              <span>Total MRP</span> <span>₹ 74,703</span>
+                              <span>Total</span>{" "}
+                              <span>₹ {cartTotalPrice.toFixed(2) || 0}</span>
                             </li>
                             <li>
-                              <span>Discount on MRP</span> <span>₹ 39,998</span>
+                              <span>
+                                Discount <br />{" "}
+                                {CouponCode ? `(${CouponCode})` : ""}
+                              </span>{" "}
+                              <span>- ₹ {discountPrice.toFixed(2) || 0}</span>
                             </li>
-                            <div id="apply-coupon-box" className="collapse in">
+                            {/* <div id="apply-coupon-box" className="collapse in">
                               <div className="d-flex">
                                 {" "}
                                 <input
@@ -249,18 +296,23 @@ function CartPage() {
                                   <span className="">Use </span>
                                 </a>
                               </div>
-                            </div>
-                            <li>
-                              <span>Platform Fee</span>
-                              <span> ₹ 74,703</span>
-                            </li>
+                            </div> */}
+                            {taxPrice > 0 ? (
+                              <li>
+                                <span>TAX</span>
+                                <span className="text-end">
+                                  {taxPrice.toFixed(2) || 0}
+                                </span>
+                              </li>
+                            ) : null}
+
                             <li>
                               <span>
-                                Shipping Fee
-                                <br />
-                                <small>Free shipping for Makateers</small>{" "}
+                                Shipping <br />
+                                {deliveryName ? `(${deliveryName})` : ""}
+                                {/* <small>Free shipping for Makateers</small>{" "} */}
                               </span>
-                              <span>FREE</span>
+                              <span>{deliveryPrice.toFixed(2) || 0}</span>
                             </li>
                           </ul>
                         </div>
@@ -269,26 +321,35 @@ function CartPage() {
                             <ul>
                               <li>
                                 <h5>Total Amount </h5>
-                                <h5>₹ 34,725</h5>
+                                <h5>₹ {grandTotalPrice.toFixed(2) || 0}</h5>
                               </li>
                             </ul>
                           </div>
                         </div>
                       </div>
                     </div>{" "}
-                    <a
-                      href={`/checkout`}
-                      className="common-btn common-btn-purple mt-3"
-                    >
-                      Check Out
-                    </a>
+                    {access_token ? (
+                      <a
+                        onClick={() => router.push("/checkout")}
+                        className="common-btn common-btn-purple mt-3"
+                      >
+                        Check Out
+                      </a>
+                    ) : (
+                      <a
+                        href={`/login?returnUrl=cart`}
+                        className="common-btn common-btn-purple mt-3"
+                      >
+                        Login
+                      </a>
+                    )}
                   </div>
                 </div>
                 <div className="col-12 cart-left desktop-none">
                   <div className="common-btn continue-shopping mt-4">
                     {/* <ion-icon name="arrow-back-sharp" /> */}
                     <IoArrowBackSharp />
-                    <a href={`/${TROPHY_HOME_ROUTE}`}> continue shopping</a>
+                    <a href={`/`}> continue shopping</a>
                   </div>
                 </div>
               </div>

@@ -1,11 +1,44 @@
 "use client";
 
+import { paymentGatewayListApi } from "@/api";
 import Layout1 from "@/components/layout/Layout1";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function PaymentMethodPage() {
   const router = useRouter();
+
+  const [paymentGatewayList, setPaymentGatewayList] = useState([]);
+
+  const { access_token } = useSelector((state) => state.user);
+
+  const cartData = useSelector((state) => state.cart);
+  const cart = cartData?.cart || {};
+
+  const [payment_method, set_payment_method] = useState("");
+
+  useEffect(() => {
+    getPaymentGatewayList();
+  }, []);
+
+  const getPaymentGatewayList = async () => {
+    const res = await paymentGatewayListApi();
+    if (res.status == 1) {
+      setPaymentGatewayList(res.data);
+      set_payment_method(res?.data[0]?.id);
+    }
+  };
+
+  let cartTotalPrice = parseFloat(cart?.item_total || 0);
+  let discountPrice = parseFloat(cart?.coupon_discount || 0);
+  let deliveryPrice = parseFloat(cart?.delivery_amount || 0);
+  let taxName = cart?.tax_name || "";
+  let deliveryName = cart?.delivery_name || "";
+  let CouponCode = cart?.coupon_code || "";
+  let taxPrice = parseFloat(cart?.tax_amount || 0);
+  let grandTotalPrice = parseFloat(cart?.grand_total || 0);
+
   return (
     <Layout1>
       <section className="add-addresses-section section-space">
@@ -16,10 +49,16 @@ function PaymentMethodPage() {
                 <a href="/cart" className="tab common-btn ">
                   Cart
                 </a>
-                <a href="/address" className="tab common-btn">
-                  Address
+                <a
+                  href={access_token ? "/checkout" : `/login`}
+                  className="tab common-btn"
+                >
+                  Checkout
                 </a>
-                <a href="/payment-method" className="tab common-btn active">
+                <a
+                  href={access_token ? "/payment-method" : `/login`}
+                  className="tab common-btn active"
+                >
                   Payment
                 </a>
               </div>
@@ -34,78 +73,30 @@ function PaymentMethodPage() {
                 <br />
                 <div className="payment-choice-box">
                   <ul>
-                    <li>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="exampleRadios"
-                          id="exampleRadios1"
-                          defaultValue="option1"
-                          defaultChecked=""
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="exampleRadios1"
-                        >
-                          <strong>Pay By Razor Pay</strong>
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="exampleRadios"
-                          id="exampleRadios1"
-                          defaultValue="option1"
-                          defaultChecked=""
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="exampleRadios1"
-                        >
-                          <strong>Credit/Debit Card </strong>
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="exampleRadios"
-                          id="exampleRadios1"
-                          defaultValue="option1"
-                          defaultChecked=""
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="exampleRadios1"
-                        >
-                          <strong>Net Banking</strong>
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="exampleRadios"
-                          id="exampleRadios1"
-                          defaultValue="option1"
-                          defaultChecked=""
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="exampleRadios1"
-                        >
-                          <strong>Cash on Delivery/Pay on Delivery</strong>
-                        </label>
-                      </div>
-                    </li>
+                    {paymentGatewayList?.map((item, index) => {
+                      return (
+                        <li key={index}>
+                          <div className="form-check">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name={item?.id}
+                              id={item?.id}
+                              checked={
+                                payment_method == item?.id ? true : false
+                              }
+                              onChange={() => set_payment_method(item?.id)}
+                            />
+                            <label
+                              className="form-check-label"
+                              htmlFor={item?.id}
+                            >
+                              <strong>{item?.payment_gateway_name}</strong>
+                            </label>
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
@@ -113,7 +104,9 @@ function PaymentMethodPage() {
                 <div className="cart-right">
                   <div className="priceblock-base-container">
                     <div className="priceblock-base-priceheader">
-                      <strong>PRICE DETAILS (28 Items)</strong>
+                      <strong>
+                        PRICE DETAILS ({cart?.item_list?.length || 0} Items)
+                      </strong>
                     </div>
                     <div
                       className="pricebreakup-base-ordersummary"
@@ -122,41 +115,34 @@ function PaymentMethodPage() {
                       <div className="pricedetail-base-row ">
                         <ul>
                           <li>
-                            <span>Total MRP</span> <span>₹ 74,703</span>
+                            <span>Total</span>{" "}
+                            <span>₹ {cartTotalPrice.toFixed(2) || 0}</span>
                           </li>
-                          <li>
-                            <span>Discount on MRP</span> <span>₹ 39,998</span>
-                          </li>
-                          <div id="apply-coupon-box" className="collapse in">
-                            <div className="d-flex">
-                              {" "}
-                              <input
-                                type="text"
-                                className="form-control"
-                                id="exampleInputName"
-                                aria-describedby="nameHelp"
-                                placeholder="Enter Coupon Code"
-                              />
-                              <a
-                                href="#"
-                                className="common-btn common-btn-purple"
-                                aria-label="Use "
-                              >
-                                <span className="">Use </span>
-                              </a>
-                            </div>
-                          </div>
-                          <li>
-                            <span>Platform Fee</span>
-                            <span> ₹ 74,703</span>
-                          </li>
+                          {/* <li>
+                          <span>Discount</span> <span>₹ 39,998</span>
+                        </li> */}
                           <li>
                             <span>
-                              Shipping Fee
+                              Coupon Discount <br />{" "}
+                              {CouponCode ? `(${CouponCode})` : ""}
+                            </span>{" "}
+                            <span>- ₹ {discountPrice.toFixed(2) || 0}</span>
+                          </li>
+                          {taxPrice > 0 ? (
+                            <li>
+                              <span>TAX</span>
+                              <span className="text-end">
+                                {taxPrice.toFixed(2) || 0}
+                              </span>
+                            </li>
+                          ) : null}
+                          <li>
+                            <span>
+                              Shipping
                               <br />
-                              <small>Free shipping for Makateers</small>{" "}
+                              {deliveryName ? `(${deliveryName})` : ""}
                             </span>
-                            <span>FREE</span>
+                            <span>{deliveryPrice.toFixed(2) || 0}</span>
                           </li>
                         </ul>
                       </div>
@@ -165,7 +151,7 @@ function PaymentMethodPage() {
                           <ul>
                             <li>
                               <h5>Total Amount </h5>
-                              <h5>₹ 34,725</h5>
+                              <h5>₹ {grandTotalPrice.toFixed(2) || 0}</h5>
                             </li>
                           </ul>
                         </div>

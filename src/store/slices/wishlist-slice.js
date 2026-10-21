@@ -36,7 +36,7 @@ export const fetchWishlist = createAsyncThunk("fetchWishlist", async () => {
 export const toggleWishlist = createAsyncThunk(
   "toggleWishlist",
   async (params, { dispatch }) => {
-    const token = localStorage.getItem("n21-access-token");
+    const token = localStorage.getItem("makatee-access-token");
     console.log("t", token);
     if (!token) {
       toast.warn("Please login to see wishlist");

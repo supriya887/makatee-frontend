@@ -8,7 +8,7 @@ import {
 
 function FeatureSection() {
   return (
-    <section className="feature-section section-space pb-0">
+    <section className="feature-section section-space">
       <div className="container">
         <div className="row">
           <div
@@ -18,14 +18,13 @@ function FeatureSection() {
             data-aos-easing="liner"
           >
             <h4 className="text-center">
-              We are your one stop solution for all Awards &amp; Gifting related
-              requirements!
+             Your one-stop solution for all awards and gifting needs.
             </h4>
           </div>
         </div>
         <div className="row">
           <div
-            className="col-12 col-md-6 col-lg-3"
+            className="col-12 col-sm-6 col-lg-3"
             data-aos="fade-up"
             data-aos-duration={500}
           >
@@ -37,14 +36,13 @@ function FeatureSection() {
               <div>
                 <h6>Free Shipping</h6>
                 <p>
-                  Seamless and easy-to-use Shipping and checkout process allows
-                  customers to review
+                 Smooth Shipping and Checkout Experience
                 </p>
               </div>
             </div>
           </div>
           <div
-            className="col-12 col-md-6 col-lg-3"
+            className="col-12 col-sm-6 col-lg-3"
             data-aos="fade-up"
             data-aos-duration={1000}
           >
@@ -56,15 +54,13 @@ function FeatureSection() {
               <div>
                 <h6>Customer Support</h6>
                 <p>
-                  Providing multiple customer service channels, such as live
-                  chat, email, and phone support, is essential for assisting
-                  customers
+                  Comprehensive Customer Support
                 </p>
               </div>
             </div>
           </div>
           <div
-            className="col-12 col-md-6 col-lg-3"
+            className="col-12 col-sm-6 col-lg-3"
             data-aos="fade-up"
             data-aos-duration={1500}
           >
@@ -76,14 +72,13 @@ function FeatureSection() {
               <div>
                 <h6>Customisation</h6>
                 <p>
-                  eCommerce sites often use customer data and behavior to
-                  provide personalized recommendations, offers, or promotions.
+                  Personalized Recommendations & Offers
                 </p>
               </div>
             </div>
           </div>
           <div
-            className="col-12 col-md-6 col-lg-3"
+            className="col-12 col-sm-6 col-lg-3"
             data-aos="fade-up"
             data-aos-duration={2000}
           >
@@ -95,8 +90,7 @@ function FeatureSection() {
               <div>
                 <h6>Secure Payment Gateways</h6>
                 <p>
-                  Secure, encrypted payment systems are crucial for eCommerce to
-                  ensure safe and easy transactions.{" "}
+                  Safe & Easy Online Transactions
                 </p>
               </div>
             </div>

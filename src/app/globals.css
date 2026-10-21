@@ -40,3 +40,10 @@ a {
     color-scheme: dark;
   }
 }
+
+/* Override menu-box display none on mobile for MenuContainerSection */
+@media (max-width: 1199px) {
+  .menu-box {
+    display: block !important;
+  }
+}
