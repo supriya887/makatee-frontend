@@ -10,7 +10,7 @@ import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useDispatch } from "react-redux";
-import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+import FacebookLogin from "@greatsumini/react-facebook-login";
 
 function LoginPage() {
   const router = useRouter();
