@@ -167,7 +167,7 @@ function Footer() {
               </a>
             </div>
           </div>
-          <div className="col-12 col-md-4 d-flex justify-content-center align-items-center my-3 my-md-0">
+          
             <iframe
               id="Iframe1"
               src="https://dunsregistered.dnb.com/SealAuthentication.aspx?Cid=1"
@@ -179,7 +179,7 @@ function Footer() {
               referrerPolicy="no-referrer-when-downgrade"
               style={{ border: "none", background: "transparent" }}
             />
-          </div>
+         
            <div className="col-12 col-md-4">
             <div className="payment-img text-right  position-relative d-flex justify-content-end">
               <img
@@ -192,6 +192,7 @@ function Footer() {
         </div>
       </div>
     </footer>
+    
     </>
 
   );
