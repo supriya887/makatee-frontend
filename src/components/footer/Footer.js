@@ -167,19 +167,24 @@ function Footer() {
               </a>
             </div>
           </div>
-          
+          <div className="col-12 col-md-4 d-flex justify-content-center align-items-center my-3 my-md-0">
             <iframe
               id="Iframe1"
-              src="https://dunsregistered.dnb.com/SealAuthentication.aspx?Cid=1"
+              src="https://profiles.dunsregistered.com/TpTpmsSeal.aspx?Directory=&Domain=makatee.com"
               width="114"
               height="97"
               frameBorder="0"
               scrolling="no"
               title="D&B Registered"
               referrerPolicy="strict-origin-when-cross-origin"
-              style={{ border: "none", background: "transparent" }}
+              style={{
+                border: "none",
+                background: "#fff",
+                display: "block",
+                flexShrink: 0,
+              }}
             />
-         
+          </div>
            <div className="col-12 col-md-4">
             <div className="payment-img text-right  position-relative d-flex justify-content-end">
               <img
