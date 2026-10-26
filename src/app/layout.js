@@ -103,6 +103,17 @@ export default function RootLayout({ children }) {
           src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
         ></Script>
         <Script src="/assets/js/custom.js"></Script>
+        <iframe
+              id="Iframe1"
+              src="https://dunsregistered.dnb.com/SealAuthentication.aspx?Cid=1"
+              width="114"
+              height="97"
+              frameBorder="0"
+              scrolling="no"
+              title="D&B Registered"
+              referrerPolicy="no-referrer-when-downgrade"
+              style={{ border: "none", background: "transparent" }}
+            />
       </body>
     </html>
   );
