@@ -20,6 +20,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 const metadata = {
   title: "Makatee",
   description: "Makatee",
+  referrer: "strict-origin-when-cross-origin",
 };
 
 export default function RootLayout({ children }) {
@@ -34,6 +35,10 @@ export default function RootLayout({ children }) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="language" content="EN" />
+        <meta
+          name="referrer"
+          content="strict-origin-when-cross-origin"
+        />
         <title>Makatee</title>
         <meta name="description" content="" />
         <link
@@ -111,7 +116,7 @@ export default function RootLayout({ children }) {
               frameBorder="0"
               scrolling="no"
               title="D&B Registered"
-              referrerPolicy="no-referrer-when-downgrade"
+              referrerPolicy="strict-origin-when-cross-origin"
               style={{ border: "none", background: "transparent" }}
             />
       </body>

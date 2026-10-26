@@ -176,7 +176,7 @@ function Footer() {
               frameBorder="0"
               scrolling="no"
               title="D&B Registered"
-              referrerPolicy="no-referrer-when-downgrade"
+              referrerPolicy="strict-origin-when-cross-origin"
               style={{ border: "none", background: "transparent" }}
             />
          
