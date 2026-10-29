@@ -49,7 +49,7 @@ function ForgotPasswordPage() {
         <div className="container">
           <div className="row ">
             <div className="col-12 col-md-6 col-lg-5 col-xl-4 mx-auto">
-              <div className="forgot-box">
+              <div className="forgot-box p-4 rounded-4">
                 <h4 className="mb-5">Forgot Password</h4>
                 <form onSubmit={handleResetPassword}>
                   <div className="mb-3">
